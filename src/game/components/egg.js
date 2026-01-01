@@ -49,6 +49,16 @@ export class Egg extends Sprite{
 
         if(score > 1000) {
             chance = 0.95;
+        } else if(score > 750){
+            chance = 0.9;
+        } else if(score > 500) {
+            chance = 0.85;
+        } else if(score > 300) {
+            chance = 0.8;
+        } else if(score > 200) {
+            chance = 0.75;
+        } else if(score > 100) {
+            chance = 0.7;
         }
 
         return Math.random() > chance;
@@ -56,7 +66,7 @@ export class Egg extends Sprite{
     #generateBonus(){
         const score = SIGNALS.score.value;
 
-        let chance = 0.97;
+        let chance = 0.95;
 
         if(score > 1000) {
             chance = 0.65;
@@ -65,11 +75,11 @@ export class Egg extends Sprite{
         }else if(score > 500) {
             chance = 0.75;
         } else if(score > 300) {
-            chance = 0.83;
+            chance = 0.80;
         } else if(score > 200) {
-            chance = 0.9;
+            chance = 0.85;
         } else if(score > 100) {
-            chance = 0.95;
+            chance = 0.9;
         }
 
         return Math.random() > chance;
