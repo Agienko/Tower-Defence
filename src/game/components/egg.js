@@ -4,6 +4,7 @@ import {gsap} from "gsap";
 import {SIGNALS} from "../signals/signals.js";
 import {randomMinMax} from "../../helpers/helper.js";
 import {sound} from "@pixi/sound";
+import {sender} from "../../sender/event-sender.js";
 
 export class Egg extends Sprite{
     constructor(stage) {
@@ -21,17 +22,19 @@ export class Egg extends Sprite{
         if (this.hasBonus) this.texture = Texture.from('golden_egg');
         if (this.isShit) this.texture = Texture.from('shit');
 
-        const score = SIGNALS.score.value;
+        const score = Math.max(SIGNALS.score.value, 8);
 
         this.speed = Math.max(this.isShit ? 1.2 : 1.1, Math.log10(score/8));
         this.acc = 0.005 + +this.hasBonus * 0.001 + (this.isShit ? 0.002 : 0);
 
         this.anchor.set(0.5);
+
+
         if(this.isShit){
             stage.addChild(this);
             sound.play('catch', {volume: 0.01, speed: 0.4});
         } else {
-            stage.addChildAt(this, 1);
+            stage.addChildAt(this, 2);
             sound.play('catch', {volume: 0.015, speed: 0.5});
         }
 
@@ -40,7 +43,15 @@ export class Egg extends Sprite{
     }
 
     #generateShit(){
-        return Math.random() > 0.75;
+        const score = SIGNALS.score.value;
+
+        let chance = 0.75;
+
+        if(score > 1000) {
+            chance = 0.95;
+        }
+
+        return Math.random() > chance;
     }
     #generateBonus(){
         const score = SIGNALS.score.value;
@@ -75,7 +86,12 @@ export class Egg extends Sprite{
 
         if(this.y > 300 && this.y < 310 && Math.abs(this.x - SIGNALS.bagX.value) <= 20) {
 
-            if(!this.isShit) {
+            if(this.isShit) {
+                Ticker.shared.remove(this.tick);
+                sender.send('shitOnBag', this)
+                --SIGNALS.score.value;
+                sound.play('crash', {volume: 0.02, speed: 0.5, end: 0.1});
+            } else {
                 this.destroy();
                 ++SIGNALS.score.value;
                 sound.play('catch', {volume: 0.02, speed: 1.2});
