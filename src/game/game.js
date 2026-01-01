@@ -30,8 +30,6 @@ class Game extends Container{
 
         this.bag = new Bag(this);
 
-
-
         this.loop();
 
         this.lives = SIGNALS.lives.value
@@ -58,19 +56,12 @@ class Game extends Container{
             const toDestroy = this.children.filter(child => child.type === 'egg');
 
             toDestroy.forEach(child => child.destroy());
-            const gameOver = new GameOver(this);
-            gameOver.eventMode = 'static';
 
-            const onPointerDown = () => {
-                gameOver.off('pointerdown', onPointerDown)
-                gameOver.destroy({children: true});
+            new GameOver(() => {
                 SIGNALS.lives.value = 5;
                 SIGNALS.score.value = 0;
                 this.loop();
-            }
-
-
-            gameOver.on('pointerdown', onPointerDown)
+            });
 
         })
 

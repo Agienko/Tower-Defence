@@ -4,15 +4,13 @@
     box-sizing: border-box;
     user-select: none;
 }
-html{
+
+html, body{
     position: fixed;
     inset: 0;
+    background-color: #4fc4f7;
+    overflow: hidden;
     touch-action: none;
-}
-body{
-    position: fixed;
-    inset: 0;
-    background-color: #4fc4f7
 }
 
 @media (orientation: portrait) {
@@ -35,5 +33,13 @@ body{
     background: #fff;
     pointer-events: none;
     opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #bf360c;
+    font-size: 64px;
+    font-weight: bold;
+    font-family: 'monospace';
+    text-align: center;
 }
 
