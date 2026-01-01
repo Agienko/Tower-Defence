@@ -29,15 +29,16 @@ class Game extends Container{
 
         this.bag = new Bag(this);
 
-        this.bagShadow = new Sprite({texture: Texture.WHITE});
-
-        this.bagShadow.tint = 0x000000;
-        this.bagShadow.alpha = 0.5;
-        this.bagShadow.width = 38;
-        this.bagShadow.height = 8;
-        this.bagShadow.filters = [new BlurFilter(8)];
+        this.bagShadow = new Sprite({
+            texture: Texture.WHITE,
+            tint: 0x000000,
+            alpha: 0.5,
+            width: 38,
+            height: 4,
+            filters: [new BlurFilter(6)],
+            y: 344
+        });
         this.bagShadow.anchor.set(0.5);
-        this.bagShadow.position.y = 344;
         this.addChild(this.bagShadow);
 
 

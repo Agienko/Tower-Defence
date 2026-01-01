@@ -4,15 +4,25 @@
     box-sizing: border-box;
     user-select: none;
 }
-
+/*#4fc4f7*/
 html{
-    background: #4fc4f7;
+    position: fixed;
+    inset: 0;
 }
-
 body{
     position: fixed;
     inset: 0;
-    background: #4fc4f7;
+    background: #4fc4f7
+}
+
+@media (orientation: portrait) {
+    body{
+        background: linear-gradient(
+                to bottom,
+                #4fc4f7 50%,
+                #bf360c 50%
+        );
+    }
 }
 
 .canvas-container{
