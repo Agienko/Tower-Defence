@@ -1,4 +1,4 @@
-import {Container} from "pixi.js";
+import {BlurFilter, Container, Sprite, Texture} from "pixi.js";
 import {World} from "./components/world.js";
 import {Texts} from "./components/texts.js";
 import {Chicken} from "./components/chicken.js";
@@ -28,6 +28,23 @@ class Game extends Container{
         }
 
         this.bag = new Bag(this);
+
+        this.bagShadow = new Sprite({texture: Texture.WHITE});
+
+        this.bagShadow.tint = 0x000000;
+        this.bagShadow.alpha = 0.5;
+        this.bagShadow.width = 38;
+        this.bagShadow.height = 8;
+        this.bagShadow.filters = [new BlurFilter(8)];
+        this.bagShadow.anchor.set(0.5);
+        this.bagShadow.position.y = 344;
+        this.addChild(this.bagShadow);
+
+
+        effect(() => this.bagShadow.position.x = SIGNALS.bagX.value);
+
+
+
         this.loop();
 
         effect(() => {

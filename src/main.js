@@ -33,7 +33,7 @@ export const app = new Application();
     await Assets.loadBundle(['sounds', 'textures']);
     new Game(app.stage)
 })();
-
+globalThis.__PIXI_APP__ = app;
 window.addEventListener('focus', () => { // sound resume fix
     const context = sound.context.audioContext;
 
