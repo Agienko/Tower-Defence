@@ -2,35 +2,30 @@ import './style.css';
 import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
 import * as PIXI from 'pixi.js';
-import {Application, Assets,} from "pixi.js";
-import {Resizer} from "./resizer/resizer.js";
-import Game from "./game/game.js";
+import {Application, Assets} from "pixi.js";
+import {Game} from "./game/game.js";
 import {sound} from "@pixi/sound";
 import {manifest} from "./config/manifest.js";
-
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
-export const flashBack = document.createElement('div');
-flashBack.classList.add('flashBack');
-
 const canvasContainer = document.createElement('div');
 canvasContainer.classList.add('canvas-container');
-document.body.append(canvasContainer, flashBack);
+document.body.append(canvasContainer);
 
-export const resizer = new Resizer(canvasContainer);
+// export const resizer = new Resizer(canvasContainer);
 export const app = new Application();
 
 (async () => {
     await app.init({
-        resolution: devicePixelRatio,
+        resolution: devicePixelRatio*2,
         autoDensity: true,
         antialias: false,
         preference: 'webgpu',
-        backgroundColor: '#4fc4f7',
+        backgroundColor: '#2ECC70',
+        resizeTo: window
     });
-    app.resizeTo = canvasContainer;
     canvasContainer.append(app.canvas);
     await Assets.init({manifest});
     await Assets.loadBundle(['sounds', 'textures']);

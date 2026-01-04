@@ -6,6 +6,7 @@ import {gsap, Power0, Power1, Power2} from "gsap";
 import {Tower} from "../tower/tower.js";
 import {Rocket} from "../tower/rocket.js";
 import {TankRocket} from "./tank-rocket.js";
+import {Tower2} from "../tower2/tower2.js";
 
 
 const debug = (stage, points) => {
@@ -24,12 +25,12 @@ const debug = (stage, points) => {
 
 const points = [
     {x: 128*3, y: 128*10, angle: -90, duration: 0},
-    {x: 128*3, y: 128*6,angle: 0, duration: randomMinMax(58, 62)},
-    {x: 128*7, y: 128*6, angle: -90, duration: randomMinMax(58, 62)},
-    {x: 128*7, y: 128*2, angle: 0, duration: randomMinMax(58, 62)},
-    {x: 128*12, y: 128*2, angle: 90, duration: randomMinMax(58, 62)},
-    {x: 128*12, y: 128*8, angle: 0, duration: randomMinMax(58, 62)},
-    {x: 128*17, y: 128*8, angle: 0, duration: randomMinMax(58, 62)}
+    {x: 128*3, y: 128*6,angle: 0, duration: randomMinMax(28, 32)},
+    {x: 128*7, y: 128*6, angle: -90, duration: randomMinMax(28, 32)},
+    {x: 128*7, y: 128*2, angle: 0, duration: randomMinMax(28, 32)},
+    {x: 128*12, y: 128*2, angle: 90, duration: randomMinMax(28, 32)},
+    {x: 128*12, y: 128*8, angle: 0, duration: randomMinMax(28, 32)},
+    {x: 128*17, y: 128*8, angle: 0, duration: randomMinMax(28, 32)}
 ]
 
 export class Tank extends Container{
@@ -37,16 +38,16 @@ export class Tank extends Container{
         super();
         this.stage = stage;
 
-        this.detectRadius = 16
+        this.detectRadius = 32
 
         this.index = index;
-        this.colAmount = 3;
+        this.colAmount = 2;
         this.row = Math.floor(this.index / this.colAmount);
         this.col = this.index % this.colAmount;
 
-        this.step = 70;
-        this.corrX = this.step - this.col * this.step / 2
-        this.corrY = this.step - this.row * this.step / 2
+        this.step = 80;
+        this.corrX = this.col * this.step - this.step / 2
+        this.corrY = this.row * this.step - this.step / 2
 
         this.savedAngle = 0;
 
@@ -61,27 +62,22 @@ export class Tank extends Container{
 
         this.bodySprite = new Sprite({
             texture: createTexture('268'),
-            width: 32,
-            height: 32
+            width: 64,
+            height: 64
         })
         this.bodySprite.anchor.set(0.5);
         this.addChild(this.bodySprite);
         this.addChild(this.body);
 
         this.gun = new Sprite({
-            texture: createTexture('228'),
-            width: 16,
-            height: 16,
+            texture: createTexture('227'),
+            width: 32,
+            height: 32,
             x: 0,
             y:0,
             angle: 90
         })
         this.gun.anchor.set(0.5, 0.5);
-
-
-
-        // this.body.addChild(this.fire);
-
 
 
         this.body.addChild(this.gun);
@@ -91,11 +87,12 @@ export class Tank extends Container{
 
         this.points = points
         this.health = new Health(this,{
-            width: 16,
+            width: 32,
             height: 2,
             alpha: 0.9,
-            x: -8,
-            y: -18,
+            x: -16,
+            y: -32,
+            protection: 2,
         }, () => {
             this.detectTween?.kill();
             this.detectTween = null;
@@ -117,8 +114,8 @@ export class Tank extends Container{
 
         this.points.forEach(({x, y, angle, duration}, i) => {
             if(i === 0) return;
-            this.timeLine.to(this, {x: x + this.corrX, y: y + this.corrY, duration: i === 1 ? 1 : duration, ease: Power0.easeIn});
-            this.timeLine.to(this.bodySprite, {angle, duration: 0.4, ease: Power1.easeInOut,
+            this.timeLine.to(this, {x: x + this.corrX, y: y + this.corrY, duration, ease: Power0.easeIn});
+            this.timeLine.to(this.bodySprite, {angle, duration: 1, ease: Power1.easeInOut,
                 // onStart: () => this.moveTween?.kill(),
                 // onComplete: () => this.setAngle(angle)
             })
@@ -148,7 +145,7 @@ export class Tank extends Container{
 
 
             const hasEnemy = this.stage.children.some(child => {
-                if(child instanceof Tower){
+                if(child instanceof Tower || child instanceof Tower2){
                     const enemy = this.stage.toLocal(child.body.position, child);
 
                     if (circlesCollide(myPoint.x, myPoint.y, detectionRadius, enemy.x, enemy.y, 64)){

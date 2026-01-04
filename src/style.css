@@ -8,38 +8,8 @@
 html, body{
     position: fixed;
     inset: 0;
-    background-color: #4fc4f7;
+    background-color: #89A4A6;
     overflow: hidden;
-    touch-action: none;
 }
 
-@media (orientation: portrait) {
-    body{
-        background: linear-gradient(
-                to bottom,
-                #4fc4f7 50%,
-                #bf360c 50%
-        );
-    }
-}
-
-.canvas-container{
-    position: relative;
-}
-
-.flashBack{
-    position: fixed;
-    inset: 0;
-    background: #fff;
-    pointer-events: none;
-    opacity: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #bf360c;
-    font-size: 64px;
-    font-weight: bold;
-    font-family: 'monospace';
-    text-align: center;
-}
 

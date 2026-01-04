@@ -5,6 +5,9 @@ export class Health extends Container{
         super();
         this.onDeadCb = onDeadCb;
         stage.addChild(this);
+
+        this.protection = descriptor.protection ?? 1;
+
         this._level = 100;
         this.bg = new Sprite({
             texture: Texture.WHITE,
@@ -39,7 +42,7 @@ export class Health extends Container{
         }
     }
     updateHealth(delta){
-        this.set(this.get() + delta);
+        this.set(this.get() + delta/this.protection);
     }
 
     destroy(options) {

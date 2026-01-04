@@ -1,6 +1,6 @@
 import {Container, Sprite} from "pixi.js";
-import {decorMap, roadMap} from "../../config/map.js";
-import {createTexture} from "../../helpers/helper.js";
+import {decorMap, roadMap} from "../../../config/map.js";
+import {createTexture} from "../../../helpers/helper.js";
 
 export class WorldBuilder extends Container{
     constructor(stage) {

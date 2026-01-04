@@ -15,8 +15,8 @@ export class TankRocket extends Container{
         this.cb = null;
         this.body = new Sprite({
             texture: createTexture('251'),
-            width: 16,
-            height: 16
+            width: 32,
+            height: 32
         })
         this.body.anchor.set(0.5);
 
@@ -28,14 +28,14 @@ export class TankRocket extends Container{
                 uvs: false,
                 vertex: true,
             },
-            x: -4/4,
+            x: -4/2,
         })
 
         this.fire = new Sprite({
             texture: createTexture('295'),
-            width: 16/4,
-            height: -38/4,
-            y: 38/4,
+            width: 16/2,
+            height: -38/2,
+            y: 38/2,
             alpha: 0.3
         })
         this.fire.visible = false;
@@ -49,8 +49,8 @@ export class TankRocket extends Container{
         for (let i = 0; i < 30; i++) {
             const particle = new Particle({
                 texture: createTexture('019'),
-                scaleX: 0.125/2/4,
-                scaleY: 0.125/2/4,
+                scaleX: 0.125/2/2,
+                scaleY: 0.125/2/2,
                 alpha: 0.8,
             })
             particle.tween = null;
@@ -58,11 +58,11 @@ export class TankRocket extends Container{
                 particle?.tween?.kill();
                 particle.tween = gsap.to(particle, {
                     alpha: 0,
-                    y: 110/4 + randomMinMax(-40/4, 40/4),
-                    scaleX: 0.5/4,
-                    scaleY: 0.5/4,
+                    y: 110/2 + randomMinMax(-40/2, 40/2),
+                    scaleX: 0.5/2,
+                    scaleY: 0.5/2,
                     delay: i * 0.016,
-                    x: -24/4,
+                    x: -24/2,
                     repeat: -1,
                     duration: (this.gases.particleChildren.length)*0.008,
                     ease: 'sine.in'
@@ -84,7 +84,7 @@ export class TankRocket extends Container{
         ].map(name => Texture.from(name));
 
         this.explosion = new AnimatedSprite(textures);
-        this.explosion.scale.set(0.25);
+        this.explosion.scale.set(0.5);
         this.explosion.alpha = 0.85
 
         this.explosion.anchor.set(0.5);
@@ -126,7 +126,7 @@ export class TankRocket extends Container{
 
         this.fire.visible = true;
 
-        this.fireTween = gsap.to(this.fire, {y: 40/4, alpha: 0.8, repeat:-1, yoyo: true, duration: 0.2, ease: 'sine.inOut'});
+        this.fireTween = gsap.to(this.fire, {y: 40/2, alpha: 0.8, repeat:-1, yoyo: true, duration: 0.2, ease: 'sine.inOut'});
         this.tween?.kill();
         this.scale.set(1);
         this.tween = gsap.to(this, {x: to.x, y: to.y, pixi:{scale: 0.8}, duration: 1, ease: 'expo.in', onComplete: () => {
@@ -156,16 +156,16 @@ export class TankRocket extends Container{
             if(child?.health){
                 const enemy = this.stage.toLocal(child.body.position, child);
 
-                if(circlesCollide(rocket.x, rocket.y, 16, enemy.x, enemy.y, enemy.detectRadius)){
+                if(circlesCollide(rocket.x, rocket.y, 32, enemy.x, enemy.y, child.detectRadius)){
                     const diff = Math.sqrt((enemy.x - rocket.x) ** 2 + (enemy.y - rocket.y)**2);
-                    const coef = 1 - diff/(16 + enemy.detectRadius)
+                    const coef = 1 - diff/(16 + child.detectRadius)
 
                     // const circle = new Graphics();
-                    // circle.circle(enemy.x, enemy.y, enemy.detectRadius);
+                    // circle.circle(enemy.x, enemy.y, child.detectRadius);
                     // circle.fill({ color: 0x00ff00, alpha: coef });
                     // this.stage.addChild(circle);
 
-                    child.health.updateHealth(-12*coef);
+                    child.health.updateHealth(-10*coef);
 
                 }
             }
