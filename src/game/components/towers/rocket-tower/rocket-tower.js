@@ -5,6 +5,7 @@ import {Enemy} from "../enemy/enemy.js";
 import {Rocket} from "./rocket.js";
 import {Health} from "../health/health.js";
 import {Tank} from "../tank/tank.js";
+import {sender} from "../../../sender/event-sender.js";
 
 export class Tower extends Container{
     constructor(stage) {
@@ -55,7 +56,6 @@ export class Tower extends Container{
 
         this.startIdle(0);
         this.detectEnemyCycle()
-
 
     }
 
@@ -133,6 +133,8 @@ export class Tower extends Container{
     }
 
     destroy(options) {
+        const point = this.stage.toLocal(this.body.position, this);
+        sender.send('createRemain', {point, size: 128, withExplode: true})
         this.bulletKillObj?.kill();
         this.idleTween?.kill();
         this.detectTween?.kill();

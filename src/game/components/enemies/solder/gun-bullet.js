@@ -1,5 +1,5 @@
 import {AnimatedSprite, Container, Sprite, Texture} from "pixi.js";
-import {createTexture, randomMinMax} from "../../../helpers/helper.js";
+import {createTexture, randomMinMax} from "../../../../helpers/helper.js";
 import {gsap} from "gsap";
 
 export class GunBullet extends Container{

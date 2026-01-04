@@ -3,10 +3,10 @@ import {circlesCollide, createTexture, randomFromArr, randomMinMax} from "../../
 import {Health} from "../health/health.js";
 import {gsap, Power0, Power1, Power2} from "gsap";
 
-import {Tower} from "../tower/tower.js";
-import {Rocket} from "../tower/rocket.js";
+import {RocketTower} from "../towers/rocket-tower/rocket-tower.js";
+import {Rocket} from "../towers/rocket-tower/rocket.js";
 import {TankRocket} from "./tank-rocket.js";
-import {Tower2} from "../tower2/tower2.js";
+import {BulletTower} from "../towers/bullet-tower/bullet-tower.js";
 
 
 const debug = (stage, points) => {
@@ -145,7 +145,7 @@ export class Tank extends Container{
 
 
             const hasEnemy = this.stage.children.some(child => {
-                if(child instanceof Tower || child instanceof Tower2){
+                if(child instanceof RocketTower || child instanceof BulletTower){
                     const enemy = this.stage.toLocal(child.body.position, child);
 
                     if (circlesCollide(myPoint.x, myPoint.y, detectionRadius, enemy.x, enemy.y, 64)){

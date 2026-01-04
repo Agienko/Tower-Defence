@@ -1,6 +1,7 @@
 import {Container, Particle, ParticleContainer, Sprite, AnimatedSprite, Texture, Graphics} from "pixi.js";
 import {circlesCollide, createTexture, randomMinMax} from "../../../helpers/helper.js";
 import {gsap} from "gsap";
+import {sender} from "../../../sender/event-sender.js";
 
 export class Rocket extends Container{
     constructor(stage, descriptor) {
@@ -145,6 +146,8 @@ export class Rocket extends Container{
 
 
         const rocket = this.stage.toLocal(this.body.position, this);
+
+        sender.send('createRemain', {point: rocket, size: 64})
 
         // const circle = new Graphics();
         // circle.circle(rocket.x, rocket.y, 64);

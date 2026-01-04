@@ -5,6 +5,7 @@ import {Enemy} from "../enemy/enemy.js";
 import {RocketBall} from "./rocket-ball.js";
 import {Health} from "../health/health.js";
 import {Tank} from "../tank/tank.js";
+import {sender} from "../../../sender/event-sender.js";
 
 export class Tower2 extends Container{
     constructor(stage) {
@@ -155,6 +156,8 @@ export class Tower2 extends Container{
     }
 
     destroy(options) {
+        const point = this.stage.toLocal(this.body.position, this);
+        sender.send('createRemain', {point, size: 128, withExplode: true})
         this.bulletKillObj.forEach(obj => obj.kill());
         this.bulletKillObj = null;
         this.bulletKillObj?.kill();
