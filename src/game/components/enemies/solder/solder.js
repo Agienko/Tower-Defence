@@ -3,8 +3,8 @@ import {circlesCollide, createTexture, randomFromArr, randomMinMax} from "../../
 import {Health} from "../../health/health.js";
 import {gsap, Power0, Power1, Power2} from "gsap";
 import {GunBullet} from "./gun-bullet.js";
-import {RocketTower} from "../../towers/rocket-tower/rocket-tower.js";
-import {BulletTower} from "../../towers/bullet-tower/bullet-tower.js";
+import {SIGNALS} from "../../../../signals/signals.js";
+import {directionPoints} from "../../../../config/direction-points.js";
 
 
 const debug = (stage, points) => {
@@ -21,19 +21,10 @@ const debug = (stage, points) => {
     stage.addChild(pointsGr);
 }
 
-const points = [
-    {x: 128*3, y: 128*10, angle: -90, duration: 0},
-    {x: 128*3, y: 128*6,angle: 0, duration: randomMinMax(28, 32)},
-    {x: 128*7, y: 128*6, angle: -90, duration: randomMinMax(28, 32)},
-    {x: 128*7, y: 128*2, angle: 0, duration: randomMinMax(28, 32)},
-    {x: 128*12, y: 128*2, angle: 90, duration: randomMinMax(28, 32)},
-    {x: 128*12, y: 128*8, angle: 0, duration: randomMinMax(28, 32)},
-    {x: 128*17, y: 128*8, angle: 0, duration: randomMinMax(28, 32)}
-]
-
-export class Enemy extends Container{
+export class Solder extends Container{
     constructor(stage, index) {
         super();
+        this.type = 'enemy';
         this.stage = stage;
 
         this.detectRadius = 8
@@ -95,7 +86,7 @@ export class Enemy extends Container{
 
         this.body.addChild(this.bodySprite);
 
-        this.points = points
+        this.points = directionPoints
         this.health = new Health(this,{
             width: 16,
             height: 2,
@@ -103,6 +94,7 @@ export class Enemy extends Container{
             x: -8,
             y: -14,
         }, () => {
+            SIGNALS.diedEnemies.value++;
             this.detectTween?.kill();
             this.detectTween = null;
             this.timeLine?.kill();
@@ -119,7 +111,7 @@ export class Enemy extends Container{
         this.position.set(this.points[0].x + this.corrX, this.points[0].y + this.corrY);
         this.setAngle(this.points[0].angle);
 
-        this.timeLine = gsap.timeline({paused: true});
+        this.timeLine = gsap.timeline({paused: true, });
 
         this.points.forEach(({x, y, angle, duration}, i) => {
             if(i === 0) return;
@@ -129,7 +121,10 @@ export class Enemy extends Container{
                 onComplete: () => this.setAngle(angle)
             })
         })
-        this.timeLine.to(this, { alpha: 0, duration: 0.5, onComplete: () => this.destroy({children: true})});
+        this.timeLine.to(this, { alpha: 0, duration: 0.5, onComplete: () => {
+                SIGNALS.enemiesOnBase.value++;
+                this.destroy({children: true})
+            }});
 
         this.timeLine.play();
 
@@ -154,7 +149,7 @@ export class Enemy extends Container{
 
 
             const hasEnemy = this.stage.children.some(child => {
-                if(child instanceof RocketTower || child instanceof BulletTower){
+                if(child.type === 'tower'){
                     const enemy = this.stage.toLocal(child.body.position, child);
 
                     if (circlesCollide(myPoint.x, myPoint.y, detectionRadius, enemy.x, enemy.y, 64)){
@@ -228,6 +223,7 @@ export class Enemy extends Container{
 
 
     destroy(options) {
+        SIGNALS.enemiesAmount.value--;
         this.detectTween?.kill();
         this.detectTween = null;
         this.timeLine?.kill();

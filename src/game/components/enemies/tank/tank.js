@@ -1,12 +1,10 @@
-import {Container, Graphics, Sprite, Ticker} from "pixi.js";
-import {circlesCollide, createTexture, randomFromArr, randomMinMax} from "../../../helpers/helper.js";
-import {Health} from "../health/health.js";
+import {Container, Graphics, Sprite} from "pixi.js";
+import {circlesCollide, createTexture, randomFromArr, randomMinMax} from "../../../../helpers/helper.js";
+import {Health} from "../../health/health.js";
 import {gsap, Power0, Power1, Power2} from "gsap";
-
-import {RocketTower} from "../towers/rocket-tower/rocket-tower.js";
-import {Rocket} from "../towers/rocket-tower/rocket.js";
 import {TankRocket} from "./tank-rocket.js";
-import {BulletTower} from "../towers/bullet-tower/bullet-tower.js";
+import {SIGNALS} from "../../../../signals/signals.js";
+import {directionPoints} from "../../../../config/direction-points.js";
 
 
 const debug = (stage, points) => {
@@ -23,19 +21,10 @@ const debug = (stage, points) => {
     stage.addChild(pointsGr);
 }
 
-const points = [
-    {x: 128*3, y: 128*10, angle: -90, duration: 0},
-    {x: 128*3, y: 128*6,angle: 0, duration: randomMinMax(28, 32)},
-    {x: 128*7, y: 128*6, angle: -90, duration: randomMinMax(28, 32)},
-    {x: 128*7, y: 128*2, angle: 0, duration: randomMinMax(28, 32)},
-    {x: 128*12, y: 128*2, angle: 90, duration: randomMinMax(28, 32)},
-    {x: 128*12, y: 128*8, angle: 0, duration: randomMinMax(28, 32)},
-    {x: 128*17, y: 128*8, angle: 0, duration: randomMinMax(28, 32)}
-]
-
 export class Tank extends Container{
     constructor(stage, index) {
         super();
+        this.type = 'enemy';
         this.stage = stage;
 
         this.detectRadius = 32
@@ -85,7 +74,7 @@ export class Tank extends Container{
         this.bullet.angle = 90;
         // this.bullet.position.set(0, 12);
 
-        this.points = points
+        this.points = directionPoints
         this.health = new Health(this,{
             width: 32,
             height: 2,
@@ -94,6 +83,8 @@ export class Tank extends Container{
             y: -32,
             protection: 2,
         }, () => {
+
+            SIGNALS.diedEnemies.value++;
             this.detectTween?.kill();
             this.detectTween = null;
             this.timeLine?.kill();
@@ -115,12 +106,12 @@ export class Tank extends Container{
         this.points.forEach(({x, y, angle, duration}, i) => {
             if(i === 0) return;
             this.timeLine.to(this, {x: x + this.corrX, y: y + this.corrY, duration, ease: Power0.easeIn});
-            this.timeLine.to(this.bodySprite, {angle, duration: 1, ease: Power1.easeInOut,
-                // onStart: () => this.moveTween?.kill(),
-                // onComplete: () => this.setAngle(angle)
-            })
+            this.timeLine.to(this.bodySprite, {angle, duration: 1, ease: Power1.easeInOut})
         })
-        this.timeLine.to(this, { alpha: 0, duration: 0.5, onComplete: () => this.destroy({children: true})});
+        this.timeLine.to(this, { alpha: 0, duration: 0.5, onComplete: () => {
+                SIGNALS.enemiesOnBase.value++;
+                this.destroy({children: true})
+            }});
 
         this.timeLine.play();
 
@@ -145,7 +136,7 @@ export class Tank extends Container{
 
 
             const hasEnemy = this.stage.children.some(child => {
-                if(child instanceof RocketTower || child instanceof BulletTower){
+                if(child.type === 'tower'){
                     const enemy = this.stage.toLocal(child.body.position, child);
 
                     if (circlesCollide(myPoint.x, myPoint.y, detectionRadius, enemy.x, enemy.y, 64)){
@@ -221,6 +212,7 @@ export class Tank extends Container{
 
 
     destroy(options) {
+        SIGNALS.enemiesAmount.value--;
         this.detectTween?.kill();
         this.detectTween = null;
         this.timeLine?.kill();

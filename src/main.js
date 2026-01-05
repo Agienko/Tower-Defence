@@ -6,6 +6,7 @@ import {Application, Assets} from "pixi.js";
 import {Game} from "./game/game.js";
 import {sound} from "@pixi/sound";
 import {manifest} from "./config/manifest.js";
+import {Menu} from "./menu/menu.js";
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -29,7 +30,8 @@ export const app = new Application();
     canvasContainer.append(app.canvas);
     await Assets.init({manifest});
     await Assets.loadBundle(['sounds', 'textures']);
-    new Game(app.stage)
+    new Game(app.stage);
+    new Menu(app.stage);
 })();
 globalThis.__PIXI_APP__ = app;
 window.addEventListener('focus', () => { // sound resume fix

@@ -1,4 +1,4 @@
-import {Texture} from "pixi.js";
+import {Graphics, Texture} from "pixi.js";
 
 export const randomMinMax = (min, max) => Math.random() * (max - min) + min;
 
@@ -21,4 +21,11 @@ export const circlesCollide = (x1, y1, r1, x2, y2, r2) => {
     const radiusSum = r1 + r2;
 
     return distanceSq <= radiusSum * radiusSum;
+}
+
+export const drawCircle = (x, y, radius = 10, color = 0xffffff, alpha = 0.5) => {
+    const circle = new Graphics();
+    circle.circle(x, y, radius);
+    circle.fill({ color, alpha});
+    return circle;
 }

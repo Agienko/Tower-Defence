@@ -1,4 +1,4 @@
-export const menuMap = [
+export const towersMap = [
     {
         position: {i: 4, j: 4},
         name: '041',

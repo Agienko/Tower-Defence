@@ -1,12 +1,14 @@
 import {Container, Sprite, AnimatedSprite, Texture, Graphics} from "pixi.js";
-import {circlesCollide, createTexture, randomMinMax} from "../../../helpers/helper.js";
+import {circlesCollide, createTexture, randomMinMax} from "../../../../helpers/helper.js";
 import {gsap, Power0} from "gsap";
+import {sender} from "../../../../sender/event-sender.js";
 
 export class RocketBall extends Container{
-    constructor(stage, withExplode = false) {
+    constructor(stage,params, withExplode = false) {
         super();
         this.stage = stage;
         this.stage.addChild(this);
+        this.params = params;
 
         this.isFly = false;
 
@@ -71,7 +73,7 @@ export class RocketBall extends Container{
 
         this.tween?.kill();
         this.scale.set(1);
-        this.tween = gsap.to(this, {x: to.x, y: to.y, pixi:{scale: 0.8}, duration: 0.2, ease: Power0.easeNone,
+        this.tween = gsap.to(this, {x: to.x, y: to.y, pixi:{scale: 0.8}, duration: this.params.attackTime, ease: Power0.easeNone,
             onStart: () => this.visible = true,
             onComplete: () => {
             if(this.withExplode){
@@ -90,30 +92,25 @@ export class RocketBall extends Container{
         this.explosion.visible = true;
         this.explosion.gotoAndPlay(0);
 
-
-
         const rocket = this.stage.toLocal(this.body.position, this);
 
-        // const circle = new Graphics();
-        // circle.circle(rocket.x, rocket.y, 64);
-        // circle.fill({ color: 0xff0000, alpha: 0.5 });
+        // const circle = drawCircle(rocket.x, rocket.y, this.params.damageRadius, 0xff0000)
         // this.stage.addChild(circle);
 
+        sender.send('createRemain', {point: rocket, size: this.params.damageRadius, type: 'bullet', withExplode: false})
 
         this.stage.children.forEach(child => {
             if(child?.health){
                 const enemy = this.stage.toLocal(child.body.position, child);
 
-                if(circlesCollide(rocket.x, rocket.y, 32, enemy.x, enemy.y, child.detectRadius)){
+                if(circlesCollide(rocket.x, rocket.y, this.params.damageRadius, enemy.x, enemy.y, child.detectRadius)){
                     const diff = Math.sqrt((enemy.x - rocket.x) ** 2 + (enemy.y - rocket.y)**2);
-                    const coef = 1 - diff/(64 + child.detectRadius)
+                    const coef = 1 - diff/(this.params.damageRadius + child.detectRadius)
 
-                    // const circle = new Graphics();
-                    // circle.circle(enemy.x, enemy.y, child.detectRadius);
-                    // circle.fill({ color: 0x00ff00, alpha: coef });
+                    // const circle = drawCircle(enemy.x, enemy.y, child.detectRadius)
                     // this.stage.addChild(circle);
 
-                    child.health.updateHealth(-10*coef);
+                    child.health.updateHealth(-this.params.damage*coef);
 
                 }
             }

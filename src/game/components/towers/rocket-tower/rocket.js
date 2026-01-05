@@ -1,11 +1,13 @@
 import {Container, Particle, ParticleContainer, Sprite, AnimatedSprite, Texture, Graphics} from "pixi.js";
-import {circlesCollide, createTexture, randomMinMax} from "../../../helpers/helper.js";
+import {circlesCollide, createTexture, randomMinMax} from "../../../../helpers/helper.js";
 import {gsap} from "gsap";
-import {sender} from "../../../sender/event-sender.js";
+import {sender} from "../../../../sender/event-sender.js";
 
 export class Rocket extends Container{
-    constructor(stage, descriptor) {
+    constructor(stage, params) {
         super();
+
+        this.params = params;
         this.stage = stage;
         this.stage.addChild(this);
 
@@ -85,7 +87,7 @@ export class Rocket extends Container{
         ].map(name => Texture.from(name));
 
         this.explosion = new AnimatedSprite(textures);
-        this.explosion.scale.set(0.5);
+        this.explosion.scale.set(params.damageRadius/128);
         this.explosion.alpha = 0.85
 
         this.explosion.anchor.set(0.5);
@@ -130,7 +132,7 @@ export class Rocket extends Container{
         this.fireTween = gsap.to(this.fire, {y: 40, alpha: 0.8, repeat:-1, yoyo: true, duration: 0.2, ease: 'sine.inOut'});
         this.tween?.kill();
         this.scale.set(1);
-        this.tween = gsap.to(this, {x: to.x, y: to.y, pixi:{scale: 0.8}, duration: 1, ease: 'expo.in', onComplete: () => {
+        this.tween = gsap.to(this, {x: to.x, y: to.y, pixi:{scale: 0.8}, duration: this.params.attackTime, ease: 'expo.in', onComplete: () => {
                 this.#explode()
             }});
         return {kill: () => this.cb = null}
@@ -147,7 +149,7 @@ export class Rocket extends Container{
 
         const rocket = this.stage.toLocal(this.body.position, this);
 
-        sender.send('createRemain', {point: rocket, size: 64})
+        sender.send('createRemain', {point: rocket, size: this.params.damageRadius})
 
         // const circle = new Graphics();
         // circle.circle(rocket.x, rocket.y, 64);
@@ -159,16 +161,16 @@ export class Rocket extends Container{
             if(child?.health){
                 const enemy = this.stage.toLocal(child.body.position, child);
 
-                if(circlesCollide(rocket.x, rocket.y, 64, enemy.x, enemy.y, child.detectRadius)){
+                if(circlesCollide(rocket.x, rocket.y, this.params.damageRadius, enemy.x, enemy.y, child.detectRadius)){
                     const diff = Math.sqrt((enemy.x - rocket.x) ** 2 + (enemy.y - rocket.y)**2);
-                    const coef = 1 - diff/(64 + child.detectRadius)
+                    const coef = 1 - diff/(this.params.damageRadius + child.detectRadius)
 
                     // const circle = new Graphics();
                     // circle.circle(enemy.x, enemy.y, child.detectRadius);
                     // circle.fill({ color: 0x00ff00, alpha: coef });
                     // this.stage.addChild(circle);
 
-                    child.health.updateHealth(-50*coef);
+                    child.health.updateHealth(-this.params.damage*coef);
 
                 }
             }

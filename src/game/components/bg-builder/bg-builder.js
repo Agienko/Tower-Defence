@@ -2,7 +2,7 @@ import {Container, Sprite} from "pixi.js";
 import {decorMap, roadMap} from "../../../config/map.js";
 import {createTexture} from "../../../helpers/helper.js";
 
-export class WorldBuilder extends Container{
+export class BgBuilder extends Container{
     constructor(stage) {
         super();
         stage.addChild(this);

@@ -1,11 +1,11 @@
 import {Container} from "pixi.js";
-import {menuMap} from "../../../config/menu-map.js";
+import {towersMap} from "../../../config/towers-map.js";
 import {TowerCreateIcon} from "./tower-create-icon.js";
 
-export class Menu extends Container{
+export class Ui extends Container{
     constructor(stage) {
         super();
         stage.addChild(this);
-        menuMap.forEach(item => new TowerCreateIcon(this, item))
+        towersMap.forEach(item => new TowerCreateIcon(this, item))
     }
 }

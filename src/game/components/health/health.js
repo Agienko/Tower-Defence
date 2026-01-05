@@ -39,6 +39,7 @@ export class Health extends Container{
         this.levelSprite.width = this.bg.width * this._level / 100;
         if(this._level <= 0){
             this.onDeadCb?.();
+            this.onDeadCb = null;
         }
     }
     updateHealth(delta){

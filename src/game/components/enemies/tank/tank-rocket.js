@@ -1,5 +1,5 @@
 import {Container, Particle, ParticleContainer, Sprite, AnimatedSprite, Texture, Graphics} from "pixi.js";
-import {circlesCollide, createTexture, randomMinMax} from "../../../helpers/helper.js";
+import {circlesCollide, createTexture, randomMinMax} from "../../../../helpers/helper.js";
 import {gsap} from "gsap";
 
 export class TankRocket extends Container{

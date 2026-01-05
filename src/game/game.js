@@ -1,51 +1,42 @@
-import {WorldBuilder} from "./components/world-builder/world-builder.js";
+import {BgBuilder} from "./components/bg-builder/bg-builder.js";
 import {ScaleSystem} from "./scale-system.js";
-import {Enemy} from "./components/enemy/enemy.js";
-import {Tower} from "./components/tower/tower.js";
-import {gsap} from "gsap";
-import {Tank} from "./components/tank/Tank.js";
-import {Tower2} from "./components/tower2/tower2.js";
+
+import {RemainsBuilder} from "./components/remains-builder/remains-builder.js";
+import {Ui} from "./components/ui/ui.js";
+import {World} from "./components/world/world.js";
+import {effect} from "@preact/signals-core";
+import {SIGNALS} from "../signals/signals.js";
 
 export class Game extends ScaleSystem{
     constructor(stage) {
         super(stage);
 
-        this.worldBuilder = new WorldBuilder(this);
+        this.bgBuilder = new BgBuilder(this);
+        this.remainsContainer = new RemainsBuilder(this);
+        this.menu = new Ui(this);
+        this.world = new World(this);
 
-        const timeLine = gsap.timeline();
 
-        // timeLine.call(() => {
-        //     for (let i = 0; i < 25; i++) new Enemy(this, i)
-        // })
-        // timeLine.to({}, {duration: 10})
-        timeLine.call(() => {
-            for (let i = 0; i < 4; i++) new Tank(this, i)
+       this.diedEnemies = SIGNALS.diedEnemies.value
+
+        effect(() => {
+            const diedDelta = SIGNALS.diedEnemies.value - this.diedEnemies;
+            if(!diedDelta) return;
+            this.diedEnemies = SIGNALS.diedEnemies.value;
+            const add = 250 * diedDelta * SIGNALS.wave.peek();
+            SIGNALS.money.value = SIGNALS.money.peek() + add
         })
-        timeLine.to({}, {duration: 15})
-        timeLine.call(() => {
-            for (let i = 0; i < 25; i++) new Enemy(this, i)
+
+        this.enemiesOnBase = SIGNALS.enemiesOnBase.value
+
+        effect(() => {
+            const delta = SIGNALS.enemiesOnBase.value - this.enemiesOnBase;
+            if(!delta) return;
+            this.enemiesOnBase = SIGNALS.enemiesOnBase.value
+            const add = delta * SIGNALS.wave.peek();
+            console.log('add', add);
+            SIGNALS.hp.value = SIGNALS.hp.peek() - add
         })
-
-
-
-        this.tower = new Tower2(this);
-        this.tower.position.set(128*5, 128*4);
-        //
-        //
-        this.tower2 = new Tower2(this);
-        this.tower2.position.set(128*5, 128*7);
-
-        // this.tower3 = new Tower(this);
-        // this.tower3.position.set(128*9, 128*3);
-        //
-        //
-        // this.tower4 = new Tower(this);
-        // this.tower4.position.set(128*13, 128*6);
-        //
-        // this.tower5 = new Tower(this);
-        // this.tower5.position.set(128*15, 128*6);
-
-
 
 
         this.onResize();

@@ -1,17 +1,17 @@
-import {RocketTower} from "./rocket-tower/rocket-tower.js";
-import {BulletTower} from "./bullet-tower/bullet-tower.js";
+
 import {SIGNALS} from "../../../signals/signals.js";
+import {Solder} from "./solder/solder.js";
+import {Tank} from "./tank/tank.js";
 
 const towerMap = {
-    'rocket': RocketTower,
-    'bullet': BulletTower
+    'solder': Solder,
+    'tank': Tank
 }
 
-export const createTower = (stage, type, position) => {
-    const TowerClass = towerMap[type];
-    if(!TowerClass) return console.error('tower not found');
-    const tower = new TowerClass(stage);
-    SIGNALS.towersAmount.value++;
-    tower.position.set(position.x, position.y);
-    return tower;
+export const createEnemy = (stage, type, amount) => {
+    const Enemy = towerMap[type];
+    if(!Enemy) return console.error('enemy not found');
+    SIGNALS.enemiesAmount.value += amount;
+    for(let i = 0; i < amount; i++)new Enemy(stage, i);
+
 }
