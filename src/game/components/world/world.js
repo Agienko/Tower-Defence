@@ -5,22 +5,38 @@ import {createTower} from "../towers/tower-builder.js";
 import {SIGNALS} from "../../../signals/signals.js";
 import {createEnemy} from "../enemies/enemy-builder.js";
 import {wavesMap} from "../../../config/waves-map.js";
-
-
+import {Airport} from "../aviation/airport.js";
+import {MinesFactory} from "../mines/mines-factory.js";
 
 
 export class World extends Container{
     constructor(stage) {
         super();
         stage.addChild(this);
+        this.sortableChildren = true;
 
-        // gsap.globalTimeline.timeScale(10);
-
-        sender.on('createTower', ({type, position}) => {
-            const cost = SIGNALS.towerCost.value;
+        sender.on('createBuilding', ({type, position, costType}) => {
+            const cost = SIGNALS[costType].value;
             if(SIGNALS.money.value < cost) return console.warn('not enough money')
             SIGNALS.money.value -= cost;
-            createTower(this, type, position)
+
+            switch (type) {
+                case 'airPort': {
+                    SIGNALS.buildingsAmount.value++;
+                    return new Airport(this, position)
+                }
+                case 'mines': {
+                    SIGNALS.buildingsAmount.value++;
+                    return new MinesFactory(this, position)
+                }
+                case 'rocket': {
+                    return createTower(this, type, position);
+                }
+                case 'bullet': {
+                    return createTower(this, type, position);
+                }
+            }
+
         })
 
         sender.on('startNewWave', () => {

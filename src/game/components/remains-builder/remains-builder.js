@@ -1,34 +1,19 @@
 import {AnimatedSprite, Container, Sprite, Texture} from "pixi.js";
 import {sender} from "../../../sender/event-sender.js";
 import {createTexture} from "../../../helpers/helper.js";
+import {Explosion} from "../explosion/explosion.js";
 
 export class RemainsBuilder extends Container{
     constructor(stage) {
         super();
         stage.addChild(this);
 
-        const textures = [
-            "explode_0",
-            "explode_1",
-            "explode_2",
-            "explode_3",
-            "explode_4",
-            "explode_5",
-            "explode_6",
-            "explode_7",
-            "explode_8"
-        ].map(name => Texture.from(name));
-
-        this.explosion = new AnimatedSprite(textures);
-        // this.explosion.scale.set(0.5);
-        this.explosion.alpha = 0.85
-
-        this.explosion.anchor.set(0.5);
-        this.explosion.animationSpeed = 0.3;
-        this.explosion.loop = false;
-
-        this.explosion.visible = false;
-        this.addChild(this.explosion);
+        this.explosion = new Explosion(this, {
+            scale: 0.5,
+            alpha: 0.85,
+            animationSpeed: 0.3,
+            preventDestroy: true
+        })
 
         this.explosion.onComplete = () => {
             this.explosion.visible = false;
@@ -62,19 +47,17 @@ export class RemainsBuilder extends Container{
     }
 
     explode(point, size = 64){
-        console.log('explode', point, size);
         this.explosion.position.set(point.x, point.y);
         this.explosion.width = size;
         this.explosion.height = size;
-        this.explosion.visible = true;
-        this.explosion.gotoAndPlay(0);
+        this.explosion.explode()
     }
     addChild(...children) {
         super.addChild(...children);
 
-        while (this.children.length > 300) {
-            const child = this.removeChildAt(0);
-            console.log('destroy', child);
+        while (this.children.length > 400) {
+            const child = this.children.find(child => child !== this.explosion);
+            this.removeChild(child);
             child.destroy();
         }
 

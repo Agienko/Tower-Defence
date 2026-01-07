@@ -28,6 +28,7 @@ export class RocketTower extends AbstractTower{
 
     attack(to){
         if(!this.bullet) return;
+        this.idleTween?.kill();
         this.attackTween?.kill();
 
         const from = this.stage.toLocal(this.bullet.position, this.turret );

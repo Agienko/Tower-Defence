@@ -1,23 +1,25 @@
-import {AnimatedSprite, Container, Sprite, Texture} from "pixi.js";
-import {createTexture, randomMinMax} from "../../../../helpers/helper.js";
+import {Container, Sprite, Texture} from "pixi.js";
+import { randomMinMax} from "../../../../helpers/helper.js";
 import {gsap} from "gsap";
 import {Explosion} from "../../explosion/explosion.js";
 
-export class GunBullet extends Container{
-    constructor(stage, {from, to, delay = 0, withExplode = false, onComplete}) {
+export class GunLaser extends Container{
+    constructor(stage, {from, to, delay = 0, rotation, withExplode = false, onComplete}) {
         super();
         this.zIndex = 5;
         this.onComplete = onComplete;
         this.position.set(from.x, from.y);
 
         this.body = new Sprite({
-            texture: createTexture('272'),
-            width: 8,
-            height: 8,
+            texture: Texture.WHITE,
+            width: 24,
+            height: 1,
             alpha: 0.8,
-            blendMode: 'add'
+            blendMode: 'add',
+            tint: "#ff0000"
         })
-        this.body.anchor.set(0.5);
+        this.body.rotation = rotation;
+        this.body.anchor.set(0, 0.5);
         this.addChild(this.body);
 
 
@@ -41,7 +43,8 @@ export class GunBullet extends Container{
         const explosion = new Explosion(this, {
             scale: 0.05,
             alpha: 0.5,
-            animationSpeed: 0.4,
+            animationSpeed: 0.5,
+            blendMode: 'add',
             onComplete: () => this.destroy({children: true})
         })
         return explosion;

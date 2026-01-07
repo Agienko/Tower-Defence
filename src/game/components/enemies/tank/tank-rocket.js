@@ -1,10 +1,12 @@
 import {Container, Particle, ParticleContainer, Sprite, AnimatedSprite, Texture, Graphics} from "pixi.js";
 import {circlesCollide, createTexture, randomMinMax} from "../../../../helpers/helper.js";
 import {gsap} from "gsap";
+import {Explosion} from "../../explosion/explosion.js";
 
 export class TankRocket extends Container{
     constructor(stage, descriptor) {
         super();
+        this.zIndex = 5;
         this.stage = stage;
         this.stage.addChild(this);
 
@@ -71,34 +73,16 @@ export class TankRocket extends Container{
             this.gases.addParticle(particle);
         }
 
-        const textures = [
-            "explode_0",
-            "explode_1",
-            "explode_2",
-            "explode_3",
-            "explode_4",
-            "explode_5",
-            "explode_6",
-            "explode_7",
-            "explode_8"
-        ].map(name => Texture.from(name));
+        this.explosion = new Explosion(this, {
+            scale: 0.3,
+            alpha: 0.85,
+            animationSpeed: 0.3,
+            onComplete: () => {
+                this.cb?.();
+                this.destroy({children: true});
+            }
+        })
 
-        this.explosion = new AnimatedSprite(textures);
-        this.explosion.scale.set(0.5);
-        this.explosion.alpha = 0.85
-
-        this.explosion.anchor.set(0.5);
-        this.explosion.animationSpeed = 0.3;
-        this.explosion.loop = false;
-
-        this.explosion.visible = false;
-        this.addChild(this.explosion);
-
-        this.explosion.onComplete = () => {
-            this.cb?.();
-            this.destroy({children: true});
-
-        };
         this.explosion.onFrameChange = e => {
             if(e > 5) this.explosion.blendMode = 'add';
         }
@@ -140,8 +124,8 @@ export class TankRocket extends Container{
         this.fire.visible = false;
         this.gases.visible = false;
         this.body.visible = false;
-        this.explosion.visible = true;
-        this.explosion.gotoAndPlay(0);
+
+        this.explosion.explode()
 
 
         const rocket = this.stage.toLocal(this.body.position, this);

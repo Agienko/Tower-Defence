@@ -1,9 +1,10 @@
-import {Container, Sprite, Texture} from "pixi.js";
+import {Container, Rectangle, Sprite, Texture} from "pixi.js";
 import {SIGNALS} from "../signals/signals.js";
 import {effect} from "@preact/signals-core";
 import {gsap} from "gsap";
 import {Health} from "../game/components/health/health.js";
 import {MiniContent} from "./mini-content.js";
+import {createTexture} from "../helpers/helper.js";
 
 export class MiniBlock extends Container{
     constructor(stage) {
@@ -32,14 +33,20 @@ export class MiniBlock extends Container{
 
 
         this.switcher = new Sprite({
-            texture: Texture.WHITE, width: 20, height: 20,
+            texture: createTexture('275'),
+            width: 64,
+            height: 64,
             tint: 0xffffff,
-            alpha: 0.9,
-            // x: 230
+            alpha: 0.8,
+            x: -20,
+            y: -20
         })
+        this.switcher.hitArea = new Rectangle(40, 40, 64, 64);
 
         this.switcher.eventMode = 'static';
         this.switcher.cursor = 'pointer';
+        this.switcher.on('pointerover', () => this.switcher.alpha = 1);
+        this.switcher.on('pointerout', () => this.switcher.alpha = 0.8);
 
         this.switcher.on('pointerup', () => {
             SIGNALS.miniBlockVisible.value = !SIGNALS.miniBlockVisible.value;

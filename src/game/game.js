@@ -7,6 +7,7 @@ import {World} from "./components/world/world.js";
 import {effect} from "@preact/signals-core";
 import {SIGNALS} from "../signals/signals.js";
 
+
 export class Game extends ScaleSystem{
     constructor(stage) {
         super(stage);

@@ -2,10 +2,12 @@ import {Container, Sprite, AnimatedSprite, Texture, Graphics} from "pixi.js";
 import {circlesCollide, createTexture, randomMinMax} from "../../../../helpers/helper.js";
 import {gsap, Power0} from "gsap";
 import {sender} from "../../../../sender/event-sender.js";
+import {Explosion} from "../../explosion/explosion.js";
 
 export class RocketBall extends Container{
     constructor(stage,params, withExplode = false) {
         super();
+        this.zIndex = 5;
         this.stage = stage;
         this.stage.addChild(this);
         this.params = params;
@@ -26,34 +28,18 @@ export class RocketBall extends Container{
         this.withExplode = withExplode;
 
         if(this.withExplode){
-            const textures = [
-                "explode_0",
-                "explode_1",
-                "explode_2",
-                "explode_3",
-                "explode_4",
-                "explode_5",
-                "explode_6",
-                "explode_7",
-                "explode_8"
-            ].map(name => Texture.from(name));
 
-            this.explosion = new AnimatedSprite(textures);
-            this.explosion.scale.set(0.4);
-            this.explosion.alpha = 0.7
+            this.explosion = new Explosion(this, {
+                scale: 0.4,
+                alpha: 0.7,
+                animationSpeed: 0.5,
+                blendMode: 'add',
+                onComplete: () => {
+                    this.cb?.();
+                    this.destroy({children: true});
+                }
+            })
 
-            this.explosion.anchor.set(0.5);
-            this.explosion.animationSpeed = 0.5;
-            this.explosion.loop = false;
-
-            this.explosion.visible = false;
-            this.addChild(this.explosion);
-
-            this.explosion.onComplete = () => {
-                this.cb?.();
-                this.destroy({children: true});
-            };
-            this.explosion.blendMode = 'add';
         } else {
             this.explosion = null;
         }
@@ -89,8 +75,7 @@ export class RocketBall extends Container{
     }
     #explode(){
         this.body.visible = false;
-        this.explosion.visible = true;
-        this.explosion.gotoAndPlay(0);
+        this.explosion.explode()
 
         const rocket = this.stage.toLocal(this.body.position, this);
 
@@ -100,7 +85,7 @@ export class RocketBall extends Container{
         sender.send('createRemain', {point: rocket, size: this.params.damageRadius, type: 'bullet', withExplode: false})
 
         this.stage.children.forEach(child => {
-            if(child?.health){
+            if(child.type === 'enemy' && child.health.get()){
                 const enemy = this.stage.toLocal(child.body.position, child);
 
                 if(circlesCollide(rocket.x, rocket.y, this.params.damageRadius, enemy.x, enemy.y, child.detectRadius)){

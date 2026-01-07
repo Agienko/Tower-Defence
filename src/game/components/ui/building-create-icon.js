@@ -2,14 +2,15 @@ import {AlphaFilter, Container, Sprite} from "pixi.js";
 import {createTexture} from "../../../helpers/helper.js";
 import {gsap} from "gsap";
 import {sender} from "../../../sender/event-sender.js";
-import {effect} from "@preact/signals-core";
+import {effect, signal} from "@preact/signals-core";
 import {SIGNALS} from "../../../signals/signals.js";
 
 
 
-export class TowerCreateIcon extends Container{
+export class BuildingCreateIcon extends Container{
     constructor(stage, descriptor, activeIcon) {
         super();
+
         this.activeIcon = activeIcon;
         this.pos = {x: descriptor.position.i * 128, y: descriptor.position.j * 128 };
         stage.addChild(this);
@@ -20,41 +21,41 @@ export class TowerCreateIcon extends Container{
         this.iconsContainer.y = 128
         this.addChild(this.iconsContainer);
 
-        this.rocketFilter = new AlphaFilter({alpha: 0.5});
-        this.bulletFilter = new AlphaFilter({alpha: 0.5});
-        this.rocket = new Container();
-        this.bullet = new Container();
-        this.rocket.filters = [this.rocketFilter]
-        this.bullet.filters = [this.bulletFilter]
+        this.airPortFilter = new AlphaFilter({alpha: 0.5});
+        this.minesFilter = new AlphaFilter({alpha: 0.5});
+        this.airPort = new Container();
+        this.mines = new Container();
+        this.airPort.filters = [this.airPortFilter]
+        this.mines.filters = [this.minesFilter]
 
-        this.iconsContainer.addChild(this.rocket, this.bullet);
+        this.iconsContainer.addChild(this.airPort, this.mines);
 
-        this.rocketBg = new Sprite({
+        this.airPortBg = new Sprite({
             texture: createTexture(descriptor.name),
             width: 128,
             height: 128,
         });
 
-        this.rocketIcon = new Sprite({
-            texture: createTexture('206'),
+        this.airPortIcon = new Sprite({
+            texture: createTexture('293'),
             width: 128,
             height: 128,
 
         })
-        this.rocket.addChild(this.rocketBg, this.rocketIcon);
-        this.bulletBg = new Sprite({
+        this.airPort.addChild(this.airPortBg, this.airPortIcon);
+        this.minesBg = new Sprite({
             texture: createTexture(descriptor.name),
             width: 128,
             height: 128,
             y: 128,
         });
-        this.bulletIcon = new Sprite({
-            texture: createTexture('249'),
+        this.minesIcon = new Sprite({
+            texture: createTexture('273'),
             width: 128,
             height: 128,
             y: 128,
         })
-        this.bullet.addChild(this.bulletBg, this.bulletIcon);
+        this.mines.addChild(this.minesBg, this.minesIcon);
         this.iconsContainer.scale.set(1, 0);
 
         this.body = new Sprite({
@@ -84,32 +85,31 @@ export class TowerCreateIcon extends Container{
 
                 if(!this.isOpen) return;
 
-                SIGNALS.miniBlockVisible.value = true;
+                // SIGNALS.miniBlockVisible.value = true;
 
-                const cost = SIGNALS.towerCost.value;
+                const cost = SIGNALS.buildingCost.value;
                 const msg = SIGNALS.money.value < cost ? 'not enough money' : ``;
                 SIGNALS.fastText.value = `Tower cost +${cost}$ ${msg}`;
 
             }});
         })
 
-        this.rocket.eventMode = 'static';
-        this.rocket.cursor = 'pointer';
-        this.rocket.on('pointerover', () => this.rocketFilter.alpha = 1)
-        this.rocket.on('pointerout', () => this.rocketFilter.alpha = 0.5)
-        this.rocket.on('pointerup', () => {
+        this.airPort.eventMode = 'static';
+        this.airPort.cursor = 'pointer';
+        this.airPort.on('pointerover', () => this.airPortFilter.alpha = 1)
+        this.airPort.on('pointerout', () => this.airPortFilter.alpha = 0.5)
+        this.airPort.on('pointerup', () => {
             this.toDefaultState();
-
-            sender.send('createBuilding', {type: 'rocket', position: this.pos, costType: 'towerCost'})
+            sender.send('createBuilding', {type: 'airPort', position: this.pos, costType: 'buildingCost'})
         })
 
-        this.bullet.eventMode = 'static';
-        this.bullet.cursor = 'pointer';
-        this.bullet.on('pointerover', () => this.bulletFilter.alpha = 1)
-        this.bullet.on('pointerout', () => this.bulletFilter.alpha = 0.5)
-        this.bullet.on('pointerup', () => {
+        this.mines.eventMode = 'static';
+        this.mines.cursor = 'pointer';
+        this.mines.on('pointerover', () => this.minesFilter.alpha = 1)
+        this.mines.on('pointerout', () => this.minesFilter.alpha = 0.5)
+        this.mines.on('pointerup', () => {
             this.toDefaultState();
-            sender.send('createBuilding', {type: 'bullet', position: this.pos,costType: 'towerCost'})
+            sender.send('createBuilding', {type: 'mines', position: this.pos,costType: 'buildingCost'})
         })
         effect(() => this.eventMode = SIGNALS.waveInProcess.value ? 'none' : 'static');
 

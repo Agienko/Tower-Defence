@@ -24,6 +24,7 @@ const debug = (stage, points) => {
 export class Solder extends Container{
     constructor(stage, index) {
         super();
+        this.zIndex = 1;
         this.type = 'enemy';
         this.stage = stage;
 
@@ -43,7 +44,7 @@ export class Solder extends Container{
         this.moveTween = null;
         this.fireTween = null;
 
-        stage.addChild(this);
+        stage.addChildAt(this);
 
 
         this.body = new Container();

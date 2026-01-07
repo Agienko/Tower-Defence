@@ -32,6 +32,7 @@ export class BulletTower extends AbstractTower{
 
     attack(to){
         if(this.bulletKillObj.length) return;
+        this.idleTween?.kill();
         this.attackTween?.kill();
 
         const from = this.stage.toLocal(this.turret.position,this);

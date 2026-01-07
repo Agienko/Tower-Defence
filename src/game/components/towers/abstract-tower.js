@@ -1,6 +1,6 @@
 import {Container, Graphics, Sprite} from "pixi.js";
 import {gsap} from "gsap";
-import {circlesCollide, createTexture, randomMinMax} from "../../../helpers/helper.js";
+import {circlesCollide, createTexture, drawCircle, randomMinMax} from "../../../helpers/helper.js";
 import {Health} from "../health/health.js";
 import {SIGNALS} from "../../../signals/signals.js";
 import {sender} from "../../../sender/event-sender.js";
@@ -8,6 +8,7 @@ import {sender} from "../../../sender/event-sender.js";
 export class AbstractTower extends Container{
     constructor(stage, params, BulletClass) {
         super();
+        this.zIndex = 1;
         this.type = 'tower';
         this.stage = stage;
         this.params = params;
@@ -17,16 +18,7 @@ export class AbstractTower extends Container{
 
         stage.addChild(this);
 
-        this.graphics = new Graphics();
-
-        this.graphics.circle(0, 0, params.detectionRadius);
-        this.graphics.stroke({ width: 2, color: 0xffffff , alpha: 0.7 });
-        this.graphics.position.set(64, 64);
-
-        this.graphics.scale.set(0)
-
-        this.graphicsTween = gsap.to(this.graphics, {pixi: {scale: 1, alpha: 0}, delay: 1, repeatDelay: 1, duration: 1.5, repeat: -1, ease: 'sine.out'});
-        this.addChild(this.graphics);
+        this.createDetectionAnim();
 
         this.body = new Sprite({
             texture: createTexture(params.skin.body),
@@ -56,7 +48,7 @@ export class AbstractTower extends Container{
             alpha: 0.9,
         }, () => this.destroy({children: true}));
 
-        this.bullet = new this.BulletClass(this.turret, params.bullet)
+        this.bullet = this.createBullet();
 
         this.idleTween = null;
         this.detectTween = null;
@@ -66,6 +58,25 @@ export class AbstractTower extends Container{
         this.startIdle(0);
         this.detectEnemyCycle()
     }
+
+    createBullet(){
+        return new this.BulletClass(this.turret, this.params.bullet)
+    }
+
+    createDetectionAnim(){
+        this.graphics = new Graphics();
+
+        this.graphics.circle(0, 0, this.params.detectionRadius);
+        this.graphics.stroke({ width: 2, color: 0xffffff , alpha: 0.7 });
+        this.graphics.position.set(64, 64);
+
+        this.graphics.scale.set(0)
+
+        this.graphicsTween = gsap.to(this.graphics, {pixi: {scale: 1, alpha: 0}, delay: 1, repeatDelay: 1, duration: 1.5, repeat: -1, ease: 'sine.out'});
+        this.addChild(this.graphics);
+    }
+
+
     startIdle(delay = 3){
         this.turret.rotation = this.turret.rotation % (2*Math.PI);
         this.idleTween = gsap.to(this.turret, {rotation: this.turret.rotation + 2*Math.PI, delay, repeat: -1, yoyo: true, duration: 20, ease: 'sine.inOut'});
@@ -73,9 +84,8 @@ export class AbstractTower extends Container{
 
     detectEnemyCycle(){
         this.detectTween = gsap.delayedCall(this.params.detectionInterval,  () => {
-            const enemy = this.#detect();
+            const enemy = this.detect();
             if(enemy){
-                this.idleTween?.kill();
                 this.detectTween?.kill();
                 this.attack(enemy);
             } else {
@@ -88,8 +98,13 @@ export class AbstractTower extends Container{
         console.warn('Need recreate attack')
     }
 
-    #detect(){
-        const tower = this.stage.toLocal(this.body.position, this);
+    getMyPosition(){
+        return this.stage.toLocal(this.body.position, this);
+    }
+
+    detect(){
+        const tower = this.getMyPosition();
+        if(!tower) return null;
         // const circle = drawCircle(tower.x, tower.y, this.params.detectionRadius, 0xff0000)
         // this.stage.addChild(circle);
         // setTimeout(() => circle.destroy(), 1000);
@@ -115,8 +130,12 @@ export class AbstractTower extends Container{
         return null;
     }
 
-    destroy(options) {
+    preDestroy(){
         SIGNALS.towersAmount.value--;
+    }
+
+    destroy(options) {
+        this.preDestroy();
         const point = this.stage.toLocal(this.body.position, this);
         sender.send('createRemain', {point, size: 128, withExplode: true})
         this.graphicsTween?.kill()

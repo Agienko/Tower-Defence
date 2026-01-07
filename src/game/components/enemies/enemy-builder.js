@@ -2,9 +2,11 @@
 import {SIGNALS} from "../../../signals/signals.js";
 import {Solder} from "./solder/solder.js";
 import {Tank} from "./tank/tank.js";
+import {SolderLaser} from "./solder-laser/solder-laser.js";
 
 const towerMap = {
     'solder': Solder,
+    'solder-laser': SolderLaser,
     'tank': Tank
 }
 
