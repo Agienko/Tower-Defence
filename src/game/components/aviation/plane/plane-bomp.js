@@ -47,7 +47,7 @@ export class PlaneBomb extends Container{
         this.tween2 = null;
 
         this.explosion = new Explosion(this, {
-            scale: 0.5,
+            scale: 0.3,
             alpha: 0.8,
             animationSpeed: 0.34,
             onComplete: () => this.destroy({children: true})

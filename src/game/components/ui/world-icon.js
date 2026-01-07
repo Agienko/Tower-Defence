@@ -1,46 +1,58 @@
 import {Container, Graphics, Sprite, Text} from "pixi.js";
-import {buildingsMap} from "../../../config/buildings-map.js";
-import {WorldIcon} from "./world-icon.js";
-
-import {effect, signal} from "@preact/signals-core";
-import {sender} from "../../../sender/event-sender.js";
-import {Base} from "./base.js";
 import {createTexture} from "../../../helpers/helper.js";
+
+import {sender} from "../../../sender/event-sender.js";
+import {effect} from "@preact/signals-core";
 import {SIGNALS} from "../../../signals/signals.js";
 
-export class Ui extends Container{
-    constructor(stage) {
+export class WorldIcon extends Container{
+    constructor(stage, descriptor, activeIcon) {
         super();
+        this.descriptor = descriptor;
+        this.activeIcon = activeIcon;
+        this.pos = {x: descriptor.position.i * 128, y: descriptor.position.j * 128 };
         stage.addChild(this);
-        this.activeIcon = signal(null);
-        this.onMove = false;
-        this.onDown = false;
-        stage.on('pointerdown', () => this.onDown = true )
-        stage.on('pointermove', () => {
-            if(this.onDown){this.onMove = true}
-        })
-        stage.on('pointerup', () => {
-            this.onDown = false;
-            if(!this.onMove) {
-                this.activeIcon.value = null;
-                SIGNALS.miniBlockVisible.value = false;
-                sender.send('insertToMiniBlock', null)
-            }
-            this.onMove = false;
-        })
 
-        buildingsMap.forEach(descriptor => new WorldIcon(this, descriptor, this.activeIcon))
+        this.position.set(this.pos.x, this.pos.y);
 
-        this.base = new Base(this, this.activeIcon);
+        this.body = new Sprite({
+            texture: createTexture(descriptor.name),
+            width: 128,
+            height: 128
+        });
+        this.addChild(this.body);
+
+        this.bg = new Sprite({
+            texture: createTexture('183'),
+            width: 128,
+            height: 128,
+            alpha: 0.5
+        })
+        this.addChild(this.bg);
+
+        this.eventMode = 'static';
+        this.cursor = 'pointer';
+        this.on('pointerdown', e => e.stopPropagation());
+
+        this.on('pointerover', () => this.body.alpha = 1);
+        this.on('pointerout', () => this.body.alpha = 0.8);
+
+        this.on('pointerup', e => {
+            e.stopPropagation();
+            this.activeIcon.value = this;
+            SIGNALS.miniBlockVisible.value = true;
+            const content = this.createContentForMiniBlock();
+            sender.send('insertToMiniBlock', content)
+        })
 
         effect(() => {
-            if(SIGNALS.waveInProcess.value){
-                this.activeIcon.value = null;
-                sender.send('insertToMiniBlock', null)
-            }
+            this.bg.visible = this.activeIcon.value === this
+        })
+
+        effect(() => {
+            this.eventMode = SIGNALS.waveInProcess.value ? 'none' : 'static';
         })
     }
-
     createContentForMiniBlock(){
         const content = new Container();
         content.x = 20

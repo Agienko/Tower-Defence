@@ -1,10 +1,12 @@
-import {Container, Sprite, Text} from "pixi.js";
+import {Container, Graphics, Sprite, Text} from "pixi.js";
 import {createTexture} from "../../../helpers/helper.js";
 import {SIGNALS} from "../../../signals/signals.js";
+import {sender} from "../../../sender/event-sender.js";
 
 export class Base extends Container{
-    constructor(stage, descriptor) {
+    constructor(stage, activeIcon) {
         super();
+        this.activeIcon = activeIcon;
         stage.addChild(this);
         this.base = new Sprite({
             texture: createTexture('269'),
@@ -31,9 +33,56 @@ export class Base extends Container{
 
         this.eventMode = 'static';
         this.cursor = 'pointer';
-        this.on('pointerup', () => {
+        this.on('pointerdown', e => e.stopPropagation());
+
+        this.on('pointerup', e => {
+            e.stopPropagation();
             SIGNALS.miniBlockVisible.value = true;
-            SIGNALS.fastText.value = 'BASE';
+            this.activeIcon.value = this;
+
+            const content = this.createContentForMiniBlock();
+            sender.send('insertToMiniBlock', content)
+
         })
+    }
+    createContentForMiniBlock(){
+        const content = new Container();
+
+        const staticText = new Text({
+            text: 'GLOBAL SPEED:',
+            style: {
+                fontSize: 12,
+                fill: 0x00ff00
+            },
+            x: 40,
+            y: 0,
+        })
+
+        const texts = ['x1', 'x2', 'x3', 'x4'].map((t, i) => {
+            const text = new Text({
+                text: t,
+                style: {
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    fill: SIGNALS.globalSpeed.value === i + 1 ? 0x00ff00 : 0x867979
+                },
+                x: 20 + i*40,
+                y: 16,
+            })
+            text.i = i;
+            text.eventMode = 'static';
+            text.cursor = 'pointer';
+            text.on('pointerup', e => {
+                const timeSpeed = i + 1;
+                SIGNALS.globalSpeed.value = timeSpeed;
+                texts.forEach(txt => txt.style.fill = timeSpeed === txt.i + 1 ? 0x00ff00 : 0x867979)
+            })
+
+            return text;
+        })
+
+
+        content.addChild(staticText, ...texts);
+        return content;
     }
 }

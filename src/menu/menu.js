@@ -21,10 +21,6 @@ export class Menu extends Container{
 
         this.addChild(this.hp);
 
-
-
-
-
         const style = {
             fontFamily: 'Arial',
             fontSize: 16,
@@ -91,7 +87,11 @@ export class Menu extends Container{
         this.nextWaveText.cursor = 'pointer';
         this.nextWaveText.on('pointerup', () => sender.send('startNewWave'))
 
-        this.miniBlock = new MiniBlock(this);
+
+        this.miniBlockContainer = new Container();
+        this.addChild(this.miniBlockContainer);
+
+        this.miniBlock = new MiniBlock(this.miniBlockContainer);
 
         effect(() => this.nextWaveText.visible = !SIGNALS.waveInProcess.value);
         effect(() => this.updateMoney(SIGNALS.money.value))
@@ -99,6 +99,14 @@ export class Menu extends Container{
         effect(() => this.updateDiedEnemies(SIGNALS.diedEnemies.value))
         effect(() => this.updateEnemiesOnBase(SIGNALS.enemiesOnBase.value));
         effect(() => this.hp.set(SIGNALS.hp.value))
+
+        this.onResize();
+        window.addEventListener('resize', this.onResize.bind(this));
+    }
+
+    onResize(){
+        this.miniBlockContainer.x = window.innerWidth - 260;
+        this.miniBlockContainer.y = window.innerHeight - 260;
     }
 
     updateMoney(money){

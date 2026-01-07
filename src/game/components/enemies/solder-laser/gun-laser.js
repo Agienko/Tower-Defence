@@ -13,7 +13,7 @@ export class GunLaser extends Container{
         this.body = new Sprite({
             texture: Texture.WHITE,
             width: 24,
-            height: 1,
+            height: 2,
             alpha: 0.8,
             blendMode: 'add',
             tint: "#ff0000"

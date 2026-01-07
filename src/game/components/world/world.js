@@ -8,6 +8,7 @@ import {wavesMap} from "../../../config/waves-map.js";
 import {Airport} from "../aviation/airport.js";
 import {MinesFactory} from "../mines/mines-factory.js";
 
+window.gsap = gsap;
 
 export class World extends Container{
     constructor(stage) {

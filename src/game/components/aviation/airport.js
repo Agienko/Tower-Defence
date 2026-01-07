@@ -13,7 +13,7 @@ const params = {
     armor: 2,
     detectionRadius: 100,
     detectionInterval: 5,
-    accuracyRadius: 16,
+    accuracyRadius: 32,
     aimingTime: 1,
     bullet: {
         attackTime: 1,

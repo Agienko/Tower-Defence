@@ -11,7 +11,7 @@ export class MineCircle extends ProtectCircle{
         this.body.alpha = 0.15;
         this.alpha = 1;
         this.graphics.alpha = 0.3;
-        this.minesAmount = 50;
+        this.minesAmount = 45;
         this.tween = null;
 
         this.mines = new Set();

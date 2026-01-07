@@ -55,7 +55,7 @@ export class RemainsBuilder extends Container{
     addChild(...children) {
         super.addChild(...children);
 
-        while (this.children.length > 400) {
+        while (this.children.length > 800) {
             const child = this.children.find(child => child !== this.explosion);
             this.removeChild(child);
             child.destroy();

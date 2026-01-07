@@ -16,7 +16,7 @@ const params = {
     bullet: {
         attackTime: 0.2,
         damageRadius: 32,
-        damage: 30,
+        damage: 34,
     }
 }
 
