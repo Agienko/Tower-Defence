@@ -20,11 +20,11 @@ export const app = new Application();
 
 (async () => {
     await app.init({
-        resolution: devicePixelRatio*2,
+        resolution: devicePixelRatio,
         autoDensity: true,
         antialias: false,
         preference: 'webgpu',
-        backgroundColor: '#2ECC70',
+        backgroundColor: '#89A4A6',
         resizeTo: window
     });
     canvasContainer.append(app.canvas);

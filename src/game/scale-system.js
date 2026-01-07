@@ -20,7 +20,11 @@ export class ScaleSystem extends Container{
         window.addEventListener('pointerleave', this.onPointerUp);
         window.addEventListener('blur', this.onPointerUp);
         window.addEventListener('pointercancel', this.onPointerUp);
-        window.addEventListener('resize', this.onResize);
+
+
+        const viewPort = window.visualViewport ?? window;
+        viewPort.addEventListener('resize', this.onResize);
+
     }
 
     onWheel = (e) => {
