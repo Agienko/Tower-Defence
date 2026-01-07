@@ -59,6 +59,30 @@ export class AbstractTower extends Container{
         this.detectEnemyCycle()
     }
 
+    shiftShot(from, to, sideDelta, forwardDelta) {
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+
+        const len = Math.hypot(dx, dy) || 1;
+
+        const ux = dx / len;
+        const uy = dy / len;
+
+        const nx = -uy;
+        const ny =  ux;
+
+        const sx = nx * sideDelta;
+        const sy = ny * sideDelta;
+
+        const fx = ux * forwardDelta;
+        const fy = uy * forwardDelta;
+
+        return {
+            from: {x: from.x + sx + fx, y: from.y + sy + fy},
+            to: {x: to.x + sx, y: to.y + sy},
+        };
+    }
+
     createBullet(){
         return new this.BulletClass(this.turret, this.params.bullet)
     }

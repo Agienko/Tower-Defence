@@ -1,3 +1,20 @@
+
+const towerIcons= [
+    {type: 'rocket', icon: '206'},
+    {type: 'bullet', icon: '249'},
+    {type: 'mini-gun', icon: '250'},
+    {type: 'double-rocket', icon: '205'},
+]
+
+
+const buildingIcons= [
+    {type: 'airPort', icon: '293'},
+    {type: 'mines', icon: '273'}
+]
+
+
+
+
 export const buildingsMap = [
     {
         position: {i: 5, j: 2},
@@ -6,7 +23,7 @@ export const buildingsMap = [
         text: 'Create Building',
         costText: 'Cost +',
         costType: 'buildingCost',
-        icons: [{type: 'airPort', icon: '293'}, {type: 'mines', icon: '273'}]
+        icons: buildingIcons
     },
     {
         position: {i: 8, j: 4},
@@ -15,7 +32,7 @@ export const buildingsMap = [
         text: 'Create Building',
         costText: 'Cost +',
         costType: 'buildingCost',
-        icons: [{type: 'airPort', icon: '293'}, {type: 'mines', icon: '273'}]
+        icons: buildingIcons
     },
     {
         position: {i: 4, j: 4},
@@ -24,7 +41,7 @@ export const buildingsMap = [
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
-        icons: [{type: 'rocket', icon: '206'}, {type: 'bullet', icon: '249'}]
+        icons: towerIcons
     },
     {
         position: {i: 5, j: 7},
@@ -33,7 +50,7 @@ export const buildingsMap = [
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
-        icons: [{type: 'rocket', icon: '206'}, {type: 'bullet', icon: '249'}]
+        icons: towerIcons
     },
     {
         position: {i: 9, j: 3},
@@ -42,7 +59,7 @@ export const buildingsMap = [
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
-        icons: [{type: 'rocket', icon: '206'}, {type: 'bullet', icon: '249'}]
+        icons: towerIcons
     },
     {
         position: {i: 8, j: 5},
@@ -51,7 +68,7 @@ export const buildingsMap = [
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
-        icons: [{type: 'rocket', icon: '206'}, {type: 'bullet', icon: '249'}]
+        icons: towerIcons
     },
     {
         position: {i: 10, j: 7},
@@ -60,7 +77,7 @@ export const buildingsMap = [
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
-        icons: [{type: 'rocket', icon: '206'}, {type: 'bullet', icon: '249'}]
+        icons: towerIcons
     },
     {
         position: {i: 13, j: 2},
@@ -69,7 +86,7 @@ export const buildingsMap = [
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
-        icons: [{type: 'rocket', icon: '206'}, {type: 'bullet', icon: '249'}]
+        icons: towerIcons
     },
     {
         position: {i: 13, j: 6},
@@ -78,7 +95,7 @@ export const buildingsMap = [
         text: 'Create Building',
         costText: 'Cost +',
         costType: 'buildingCost',
-        icons: [{type: 'airPort', icon: '293'}, {type: 'mines', icon: '273'}]
+        icons: buildingIcons
     },
     {
         position: {i: 14, j: 6},
@@ -87,7 +104,7 @@ export const buildingsMap = [
         text: 'Create Building',
         costText: 'Cost +',
         costType: 'buildingCost',
-        icons: [{type: 'airPort', icon: '293'}, {type: 'mines', icon: '273'}]
+        icons: buildingIcons
     },
     {
         position: {i: 13, j: 5},
@@ -96,7 +113,7 @@ export const buildingsMap = [
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
-        icons: [{type: 'rocket', icon: '206'}, {type: 'bullet', icon: '249'}]
+        icons: towerIcons
     },
     {
         position: {i: 14, j: 9},
@@ -105,7 +122,7 @@ export const buildingsMap = [
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
-        icons: [{type: 'rocket', icon: '206'}, {type: 'bullet', icon: '249'}]
+        icons: towerIcons
     },
 
 ]

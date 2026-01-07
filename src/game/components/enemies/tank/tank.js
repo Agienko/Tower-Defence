@@ -1,5 +1,11 @@
 import {Container, Graphics, Sprite} from "pixi.js";
-import {circlesCollide, createTexture, randomFromArr, randomMinMax} from "../../../../helpers/helper.js";
+import {
+    circlesCollide,
+    createTexture,
+    randomFromArr,
+    randomMinMax,
+    shortestRotationRad
+} from "../../../../helpers/helper.js";
 import {Health} from "../../health/health.js";
 import {gsap, Power0, Power1, Power2} from "gsap";
 import {TankRocket} from "./tank-rocket.js";
@@ -156,7 +162,8 @@ export class Tank extends Container{
                             y: enemy.y + randomMinMax(-32, 32),
                         }
 
-                        const rotation =  Math.atan2(hitErrorEnemy.y - myPoint.y, hitErrorEnemy.x - myPoint.x);
+                        const rotationTo = Math.atan2(hitErrorEnemy.y - myPoint.y, hitErrorEnemy.x - myPoint.x);
+                        const rotation = shortestRotationRad(this.body.rotation, rotationTo)
 
                         this.moveTween = gsap.to(this.body, {rotation, duration: 0.2, onComplete: () => {
                                 this.attack(hitErrorEnemy, rotation, () => {

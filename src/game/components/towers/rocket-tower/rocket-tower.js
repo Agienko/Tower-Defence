@@ -1,6 +1,7 @@
 import {gsap} from "gsap";
 import {Rocket} from "./rocket.js";
 import {AbstractTower} from "../abstract-tower.js";
+import {shortestRotationRad} from "../../../../helpers/helper.js";
 
 
 const params = {
@@ -32,7 +33,9 @@ export class RocketTower extends AbstractTower{
         this.attackTween?.kill();
 
         const from = this.stage.toLocal(this.bullet.position, this.turret );
-        const rotation = Math.PI/2 + Math.atan2(to.y - from.y, to.x - from.x);
+
+        const rotationTo = Math.PI/2 + Math.atan2(to.y - from.y, to.x - from.x);
+        const rotation = shortestRotationRad(this.turret.rotation, rotationTo)
 
         this.attackTween = gsap.to(this.turret, {rotation, duration: params.aimingTime, onComplete: () => {
                 this.bulletKillObj = this.bullet.start({from, to, rotation, stage: this.stage}, () => {

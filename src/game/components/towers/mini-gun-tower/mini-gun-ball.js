@@ -4,7 +4,7 @@ import {gsap, Power0} from "gsap";
 import {sender} from "../../../../sender/event-sender.js";
 import {Explosion} from "../../explosion/explosion.js";
 
-export class RocketBall extends Container{
+export class MiniGunBall extends Container{
     constructor(stage,params, withExplode = false) {
         super();
         this.zIndex = 5;
@@ -18,9 +18,12 @@ export class RocketBall extends Container{
 
         this.cb = null;
         this.body = new Sprite({
-            texture: createTexture('273'),
-            width: 64,
-            height: 64
+            texture: Texture.WHITE,
+            width: 4,
+            height: 64,
+            blendMode: 'add',
+            tint: 0xff0000,
+            alpha: 0.8
         })
         this.body.anchor.set(0.5);
 
@@ -47,7 +50,8 @@ export class RocketBall extends Container{
         this.visible = false;
     }
 
-    start({from, to, rotation, stage}, cb){
+
+    start({from,rotation, to, stage}, cb){
         if(this.isFly) return;
         this.isFly = true;
         this.stage = stage;
@@ -55,7 +59,7 @@ export class RocketBall extends Container{
         stage.addChild(this);
         this.position.set(from.x, from.y);
 
-        // this.rotation = rotation;
+        this.rotation = rotation;
 
         this.tween?.kill();
         this.scale.set(1);

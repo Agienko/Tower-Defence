@@ -22,20 +22,19 @@ export class World extends Container{
             SIGNALS.money.value -= cost;
 
             switch (type) {
-                case 'airPort': {
+                case 'airPort':
                     SIGNALS.buildingsAmount.value++;
-                    return new Airport(this, position)
-                }
-                case 'mines': {
+                    return new Airport(this, position);
+                case 'mines':
                     SIGNALS.buildingsAmount.value++;
-                    return new MinesFactory(this, position)
-                }
-                case 'rocket': {
+                    return new MinesFactory(this, position);
+                case 'rocket':
+                case 'bullet':
+                case 'mini-gun':
+                case 'double-rocket':
                     return createTower(this, type, position);
-                }
-                case 'bullet': {
-                    return createTower(this, type, position);
-                }
+                default:
+                    return console.log('not found building type: ', type);
             }
 
         })

@@ -13,6 +13,16 @@ export class Base extends Container{
             width: 128*2,
             height: 128*2,
         });
+
+        this.circle = new Graphics();
+        this.circle.circle(0, 0, 13)
+        this.circle.fill({color: 0xff0000, alpha: 1});
+        this.circle.position.set(195, 96);
+        this.circle.alpha = 0.4;
+        this.circle.blendMode = 'add-npm';
+        gsap.to(this.circle, {alpha: 0, duration: 1, repeat: -1, ease: 'power2.inOut'})
+
+
         this.text = new Text({
             text: 'BASE',
             anchor: {x: 0.5, y: 0.5},
@@ -27,7 +37,7 @@ export class Base extends Container{
             y: 128
         })
 
-        this.addChild(this.base, this.text);
+        this.addChild(this.base, this.text, this.circle);
 
         this.position.set(128*15, 128*5 + 64);
 
@@ -58,7 +68,7 @@ export class Base extends Container{
             y: 0,
         })
 
-        const texts = ['x1', 'x2', 'x3', 'x4'].map((t, i) => {
+        const texts = ['x1', 'x2', 'x3', 'x4', 'x5'].map((t, i) => {
             const text = new Text({
                 text: t,
                 style: {
@@ -66,7 +76,7 @@ export class Base extends Container{
                     fontWeight: 'bold',
                     fill: SIGNALS.globalSpeed.value === i + 1 ? 0x00ff00 : 0x867979
                 },
-                x: 20 + i*40,
+                x: 14 + i*40,
                 y: 16,
             })
             text.i = i;

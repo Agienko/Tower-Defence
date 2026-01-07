@@ -38,3 +38,12 @@ export const drawCircle = (x, y, radius = 10, color = 0xffffff, alpha = 0.5) => 
     circle.fill({ color, alpha});
     return circle;
 }
+
+export const shortestRotationRad = (from, to) => {
+    let delta = (to - from) % (Math.PI * 2);
+
+    if (delta > Math.PI) delta -= Math.PI * 2;
+    if (delta < -Math.PI) delta += Math.PI * 2;
+
+    return from + delta;
+}

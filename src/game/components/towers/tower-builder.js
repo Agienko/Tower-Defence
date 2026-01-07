@@ -1,10 +1,14 @@
 import {RocketTower} from "./rocket-tower/rocket-tower.js";
 import {BulletTower} from "./bullet-tower/bullet-tower.js";
 import {SIGNALS} from "../../../signals/signals.js";
+import {MiniGunTower} from "./mini-gun-tower/mini-gun-tower.js";
+import {DoubleRocketTower} from "./double-rocket-tower/double-rocket-tower.js";
 
 const towerMap = {
     'rocket': RocketTower,
-    'bullet': BulletTower
+    'bullet': BulletTower,
+    'mini-gun': MiniGunTower,
+    'double-rocket': DoubleRocketTower
 }
 
 export const createTower = (stage, type, position) => {

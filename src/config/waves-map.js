@@ -2,7 +2,7 @@ export const wavesMap = [
     [
         {type: 'solder-laser', count: 16, duration: 15},
         {type: 'solder', count: 20, duration: 15},
-        {type: 'solder', count: 20, duration: 15},
+        {type: 'tank', count: 20, duration: 15},
     ],
     [
         {type: 'solder', count: 20, duration: 15},

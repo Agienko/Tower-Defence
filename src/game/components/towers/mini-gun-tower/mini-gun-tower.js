@@ -1,13 +1,12 @@
 import {gsap} from "gsap";
 import {AbstractTower} from "../abstract-tower.js";
-import {RocketBall} from "./rocket-ball.js";
-import {shortestRotationRad} from "../../../../helpers/helper.js";
+import {MiniGunBall} from "./mini-gun-ball.js";
 
 
 const params = {
     skin: {
-        body: '181',
-        turret: '249',
+        body: '180',
+        turret: '250',
     },
     armor: 1,
     detectionRadius: 350,
@@ -17,18 +16,17 @@ const params = {
     bullet: {
         attackTime: 0.2,
         damageRadius: 32,
-        damage: 34,
+        damage: 18,
     }
 }
 
 
 
-export class BulletTower extends AbstractTower{
+export class MiniGunTower extends AbstractTower{
     constructor(stage) {
-        super(stage, params, RocketBall);
+        super(stage, params, MiniGunBall);
         this.stage = stage;
         this.bulletKillObj = [];
-
     }
 
     attack(to){
@@ -39,15 +37,16 @@ export class BulletTower extends AbstractTower{
         const from = this.stage.toLocal(this.turret.position,this);
         const rotationTo = Math.PI/2 + Math.atan2(to.y - from.y, to.x - from.x);
         const rotation = shortestRotationRad(this.turret.rotation, rotationTo)
-
         this.attackTween = gsap.to(this.turret, {rotation, duration: this.params.aimingTime, onComplete: () => {
                 const from = this.stage.toLocal(this.bullet.body.position,this.bullet);
 
-                for(let i = 0; i < 3; i++){
-                    const tween = gsap.delayedCall(0.1*i, () => {
-                        const bullet = new this.BulletClass(this.stage, params.bullet, i=== 1);
-                        const killObj = bullet.start({from, to, rotation, stage: this.stage}, () => {
-                            if(this.destroyed || i !== 2) return;
+                for(let i = 0; i < 8; i++){
+                    const tween = gsap.delayedCall(0.15*i, () => {
+                        const bullet = new this.BulletClass(this.stage, params.bullet, i%4 === 0);
+                        const res = this.shiftShot(from, to, 16* (i%2 === 0 ? 1 : -1), 96);
+
+                        const killObj = bullet.start({from: res.from, to: res.to, rotation, stage: this.stage}, () => {
+                            if(this.destroyed || i !== 7) return;
                             this.bulletKillObj.forEach(obj => obj?.kill());
                             this.bulletKillObj.length = 0;
                             this.startIdle();
@@ -60,6 +59,8 @@ export class BulletTower extends AbstractTower{
 
             }});
     }
+
+
 
     destroy(options) {
         this.bulletKillObj.forEach(obj => obj.kill());

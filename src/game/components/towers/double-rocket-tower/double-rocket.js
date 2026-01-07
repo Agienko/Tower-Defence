@@ -4,7 +4,7 @@ import {gsap} from "gsap";
 import {sender} from "../../../../sender/event-sender.js";
 import {Explosion} from "../../explosion/explosion.js";
 
-export class Rocket extends Container{
+export class DoubleRocket extends Container{
     constructor(stage, params) {
         super();
         this.zIndex = 5;
@@ -18,7 +18,7 @@ export class Rocket extends Container{
 
         this.cb = null;
         this.body = new Sprite({
-            texture: createTexture('252'),
+            texture: createTexture('251'),
             width: 64,
             height: 64
         })
@@ -98,7 +98,7 @@ export class Rocket extends Container{
         this.gases.particleChildren.forEach((particle, i) => particle.gasEmit())
     }
 
-    start({from, to, rotation, stage}, cb){
+    start({from,rotation, to, stage}, cb){
         if(this.isFly) return;
         this.isFly = true;
         this.stage = stage;
