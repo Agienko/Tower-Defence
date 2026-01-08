@@ -52,9 +52,21 @@ export class MiniBlock extends Container{
 
         this.content = new MiniContent(this);
 
-
         this.tween = null;
         this.tween2 = null;
+
+        const scale = SIGNALS.miniBlockVisible.value ? 1 : 0.2;
+        const pos = SIGNALS.miniBlockVisible.value ? 0 : 204;
+        this.x =  pos;
+        this.y =  pos;
+        this.scale.set(scale);
+        const size = SIGNALS.miniBlockVisible.value ? 64 : 350;
+        const switcherPox = SIGNALS.miniBlockVisible.value ? -20: -100;
+        this.switcher.x = switcherPox;
+        this.switcher.y = switcherPox;
+        this.switcher.width = size;
+        this.switcher.height = size;
+
         effect(() => {
             this.content.interactive = SIGNALS.miniBlockVisible.value;
             this.content.eventMode = SIGNALS.miniBlockVisible.value ? 'static' : 'none';
@@ -67,7 +79,6 @@ export class MiniBlock extends Container{
             const size = SIGNALS.miniBlockVisible.value ? 64 : 350;
             const switcherPox = SIGNALS.miniBlockVisible.value ? -20: -100;
             this.tween2 = gsap.to(this.switcher, {x: switcherPox, y: switcherPox, width: size, height: size, duration: 0.15, ease: 'sine.inOut'})
-
         })
 
         this.eventMode = 'static';

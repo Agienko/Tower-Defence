@@ -1,154 +1,130 @@
 import {Container} from "pixi.js";
+import {app} from "../main.js";
+import {sender} from "../sender/event-sender.js";
+import {roadMap} from "../config/map.js";
 
 export class ScaleSystem extends Container{
     constructor(stage) {
         super();
         stage.addChild(this);
-        this.downFlag = false;
+        this.pointers = new Map();
         this.startPos = {x: 0, y: 0};
+        this.startDistance = 0;
+        this.startScale = 1;
 
-        this.activeTouches = {};
-        this.lastDist = 0;
+        this.currentScale = 1;
+        this.orientation = this.getOrientation();
 
-        this.eventMode = 'static';
-        this.on('pointerdown', this.onPointerDown)
+        this.worldMapWidth = roadMap[0].length * 128;
+        this.worldMapHeight = roadMap.length * 128;
 
-        this.on('globalpointermove', this.onPointerMove);
-        this.on('wheel', this.onWheel);
-
+        window.addEventListener('pointerdown', this.onPointerDown);
+        window.addEventListener('pointermove', this.onPointerMove);
+        window.addEventListener('wheel', this.onWheel);
         window.addEventListener('pointerup', this.onPointerUp);
-        window.addEventListener('pointerleave', this.onPointerUp);
-        window.addEventListener('blur', this.onPointerUp);
         window.addEventListener('pointercancel', this.onPointerUp);
 
+        this.viewPort = window.visualViewport ?? window;
+        this.viewPort.addEventListener('resize', this.onResize);
 
-        const viewPort = window.visualViewport ?? window;
-        viewPort.addEventListener('resize', this.onResize);
+        window.addEventListener('orientationchange', () => this.centerAndScale());
 
+        sender.on('worldMapToCenter', () => this.centerAndScale());
+
+        this.centerAndScale();
+
+    }
+
+    getOrientation(){
+        return innerWidth > innerHeight ? 'landscape' : 'portrait';
+    }
+
+    centerAndScale(){
+        const sx = (innerWidth) / this.worldMapWidth;
+        const sy = (innerHeight) / this.worldMapHeight;
+        this.currentScale = Math.min(sx, sy);
+
+        this.scale.set(this.currentScale);
+        this.x = (innerWidth - this.worldMapWidth * this.currentScale) / 2;
+        this.y = (innerHeight - this.worldMapHeight * this.currentScale) / 2;
     }
 
     onWheel = (e) => {
-        const scale = this.scale.y;
-        const delta = -Math.sign(e.deltaY) * 0.1*scale;
+        const delta = -Math.sign(e.deltaY) * 0.1*this.currentScale;
 
-        const widthRatio = window.innerWidth / (this.width / scale);
-        const heightRatio = window.innerHeight / (this.height / scale);
-        const minScale = Math.max(widthRatio, heightRatio);
+        const worldX = (e.x - this.x) / this.currentScale;
+        const worldY = (e.y - this.y) / this.currentScale;
+        this.currentScale +=  delta;
 
-        const newScale = Math.max(scale + delta, minScale);
+        this.scale.set(this.currentScale);
 
-        if (newScale !== scale) {
-            const localPos = this.toLocal(e.global);
-            this.scale.set(newScale);
-            const newX = e.global.x - localPos.x * this.scale.x;
-            const newY = e.global.y - localPos.y * this.scale.y;
-            this.#normalizePosition(newX, newY);
-        }
+        this.x = e.x - worldX * this.currentScale;
+        this.y = e.y - worldY * this.currentScale;
     }
     onResize = () => {
-        this.onWheel({ deltaY: 0, global: {x: this.x, y: this.y}})
-        this.#normalizePosition(this.x, this.y);
+        app.renderer.resize(innerWidth, innerHeight);
+        sender.send('resize')
+        const orientation = this.getOrientation();
+        if(orientation !== this.orientation){
+            this.orientation = orientation;
+            this.centerAndScale();
+        }
+
     }
     onPointerDown = (e) => {
-
-        this.activeTouches[e.pointerId] = e.global.clone();
-
-        const touchIds = Object.keys(this.activeTouches);
-
-
-        if (touchIds.length === 1) {
-            this.startPos = {x: e.global.x - this.x, y: e.global.y - this.y};
-            this.downFlag = true;
-            this.cursor = 'move';
-        } else if (touchIds.length === 2) {
-            // Якщо два пальці — рахуємо початкову відстань
-            const p1 = this.activeTouches[touchIds[0]];
-            const p2 = this.activeTouches[touchIds[1]];
-            this.lastDist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-            this.downFlag = false; // Вимикаємо перетягування при скейлі
-        }
+        this.pointers.set(e.pointerId, {x: e.x, y: e.y});
+        if(this.pointers.size > 1) return
+        this.startPos.x = e.x - this.x;
+        this.startPos.y = e.y - this.y;
     }
     onPointerMove = (e) => {
-        if (this.activeTouches[e.pointerId]) {
-            this.activeTouches[e.pointerId].copyFrom(e.global);
-        }
+        if (!this.pointers.has(e.pointerId)) return;
 
-        const touchIds = Object.keys(this.activeTouches);
+        app.stage.eventMode = 'none';
+        this.pointers.set(e.pointerId, {x: e.x, y: e.y});
 
-        if (touchIds.length === 2) {
-            // Пінч-зум (двома пальцями)
-            const p1 = this.activeTouches[touchIds[0]];
-            const p2 = this.activeTouches[touchIds[1]];
-            const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        if(this.pointers.size === 1){
+            this.position.set(e.x - this.startPos.x, e.y - this.startPos.y);
+        } else if(this.pointers.size === 2){
+            const [p1, p2] = [...this.pointers.values()];
+            const distance = this.getDistance(p1, p2);
 
-            if (this.lastDist > 0) {
-                const ratio = dist / this.lastDist;
-                const scale = this.scale.y;
-                const newScaleRaw = scale * ratio;
-
-                // Центр між пальцями для фокусу масштабу
-                const center = {
-                    x: (p1.x + p2.x) / 2,
-                    y: (p1.y + p2.y) / 2
-                };
-
-                // Логіка як в onWheel, але з новим коефіцієнтом
-                const widthRatio = window.innerWidth / (this.width / scale);
-                const heightRatio = window.innerHeight / (this.height / scale);
-                const minScale = Math.max(widthRatio, heightRatio);
-                const newScale = Math.max(newScaleRaw, minScale);
-
-                if (newScale !== scale) {
-                    const localPos = this.toLocal(center);
-                    this.scale.set(newScale);
-                    const newX = center.x - localPos.x * this.scale.x;
-                    const newY = center.y - localPos.y * this.scale.y;
-                    this.#normalizePosition(newX, newY);
-                }
+            if(!this.startDistance){
+                this.startDistance = distance;
+                this.startScale = this.currentScale;
             }
-            this.lastDist = dist;
-        } else if (this.downFlag && touchIds.length === 1) {
-            // Звичайне перетягування (одним пальцем)
-            const diffX = e.global.x - this.startPos.x;
-            const diffY = e.global.y - this.startPos.y;
-            this.#normalizePosition(diffX, diffY);
+
+            const center = {x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2};
+            const worldX = (center.x - this.x) / this.currentScale;
+            const worldY = (center.y - this.y) / this.currentScale;
+
+            this.currentScale = this.startScale * distance / this.startDistance;
+            this.scale.set(this.currentScale);
+
+            this.x = center.x - worldX * this.currentScale;
+            this.y = center.y - worldY * this.currentScale;
         }
+
     }
     onPointerUp = e => {
-        // Видаляємо точку дотику (обробляємо і Native Event, і Pixi Event)
-        const id = e?.pointerId;
-        if (id !== undefined) {
-            delete this.activeTouches[id];
-        } else {
-            this.activeTouches = {}; // На випадок blur/resize скидаємо все
+        this.pointers.delete(e.pointerId);
+        if (this.pointers.size < 2) {
+            this.startDistance = 0;
         }
 
-        if (Object.keys(this.activeTouches).length < 2) {
-            this.lastDist = 0;
+        if(this.pointers.size === 1){
+            const pos = this.pointers.values().next().value;
+            this.startPos.x = pos.x - this.x;
+            this.startPos.y = pos.y - this.y;
+        }else if(this.pointers.size === 0) {
+            app.stage.eventMode = 'static';
         }
 
-        if (Object.keys(this.activeTouches).length === 0) {
-            this.downFlag = false;
-            this.cursor = 'auto';
-        }
     }
 
-    #normalizePosition(x, y) {
-        const normX = Math.min(Math.max(x, window.innerWidth - this.width), 0);
-        const normY = Math.min(Math.max(y,  window.innerHeight - this.height), 0);
-        this.position.set(normX, normY);
-    }
-    destroy(options) {
-        this.off('pointerdown', this.onPointerDown)
-
-        this.off('globalpointermove', this.onPointerMove);
-        this.off('wheel', this.onWheel);
-
-        window.removeEventListener('pointerup', this.onPointerUp);
-        window.removeEventListener('pointerleave', this.onPointerUp);
-        window.removeEventListener('blur', this.onPointerUp);
-        window.removeEventListener('pointercancel', this.onPointerUp);
-        window.removeEventListener('resize', this.onResize);
-        super.destroy(options);
+    getDistance(t1, t2) {
+        const dx = t2.x - t1.x;
+        const dy = t2.y - t1.y;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 }

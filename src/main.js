@@ -11,23 +11,17 @@ import {Menu} from "./menu/menu.js";
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
-const canvasContainer = document.createElement('div');
-canvasContainer.classList.add('canvas-container');
-document.body.append(canvasContainer);
-
-// export const resizer = new Resizer(canvasContainer);
 export const app = new Application();
 
 (async () => {
     await app.init({
-        resolution: devicePixelRatio,
+        resolution: devicePixelRatio*2,
         autoDensity: true,
         antialias: false,
         preference: 'webgpu',
         backgroundColor: '#89A4A6',
-        resizeTo: window
     });
-    canvasContainer.append(app.canvas);
+    document.body.append(app.canvas);
     await Assets.init({manifest});
     await Assets.loadBundle(['sounds', 'textures']);
     new Game(app.stage);

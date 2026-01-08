@@ -13,20 +13,11 @@ export class Ui extends Container{
         super();
         stage.addChild(this);
         this.activeIcon = signal(null);
-        this.onMove = false;
-        this.onDown = false;
-        stage.on('pointerdown', () => this.onDown = true )
-        stage.on('pointermove', () => {
-            if(this.onDown){this.onMove = true}
-        })
+        stage.eventMode = 'static';
         stage.on('pointerup', () => {
-            this.onDown = false;
-            if(!this.onMove) {
                 this.activeIcon.value = null;
                 SIGNALS.miniBlockVisible.value = false;
                 sender.send('insertToMiniBlock', null)
-            }
-            this.onMove = false;
         })
 
         buildingsMap.forEach(descriptor => new WorldIcon(this, descriptor, this.activeIcon))

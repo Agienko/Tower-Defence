@@ -15,7 +15,6 @@ export class BgBuilder extends Container{
                 y: j * 128
             })
             this.addChild(sprite);
-
             decorMap.forEach(decoration => {
                 const needCreate = decoration.position.i === i && decoration.position.j === j;
                 if (!needCreate ) return;
@@ -28,6 +27,7 @@ export class BgBuilder extends Container{
                 })
                 this.addChild(sprite);
             })
+
         }));
     }
 }

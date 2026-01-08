@@ -15,11 +15,9 @@ export class Game extends ScaleSystem{
 
         this.bgBuilder = new BgBuilder(this);
         this.remainsContainer = new RemainsBuilder(this);
-        this.menu = new Ui(this);
+        this.ui = new Ui(this);
         this.world = new World(this);
-
-
-       this.diedEnemies = SIGNALS.diedEnemies.value
+        this.diedEnemies = SIGNALS.diedEnemies.value
 
         effect(() => {
             const diedDelta = SIGNALS.diedEnemies.value - this.diedEnemies;

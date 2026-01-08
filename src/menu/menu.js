@@ -88,6 +88,28 @@ export class Menu extends Container{
         this.nextWaveText.on('pointerup', () => sender.send('startNewWave'))
 
 
+        this.centerButton = new Text({
+            text: 'CENTER',
+            anchor: {x: 1, y: 0},
+            style: {
+                fontFamily: 'Arial',
+                fontSize: 16,
+                fill: '#0783ff',
+                stroke: {color: 'rgba(250,215,41,0.7)', width: 10, join: 'round'},
+            },
+            x: 10,
+            y: 10
+        })
+        this.addChild(this.centerButton);
+
+
+        this.centerButton.eventMode = 'static';
+        this.centerButton.cursor = 'pointer';
+        this.centerButton.on('pointerup', () => sender.send('worldMapToCenter'))
+
+
+
+
         this.miniBlockContainer = new Container();
         this.addChild(this.miniBlockContainer);
 
@@ -101,12 +123,14 @@ export class Menu extends Container{
         effect(() => this.hp.set(SIGNALS.hp.value))
 
         this.onResize();
-        window.addEventListener('resize', this.onResize.bind(this));
+        sender.on('resize', this.onResize);
     }
 
-    onResize(){
+    onResize =() => {
         this.miniBlockContainer.x = window.innerWidth - 260;
         this.miniBlockContainer.y = window.innerHeight - 260;
+
+        this.centerButton.x = window.innerWidth - 10;
     }
 
     updateMoney(money){
