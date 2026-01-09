@@ -35,42 +35,47 @@ export class Airport extends AbstractTower{
         this.circle = null;
 
         this.aimingTimeTimeLine = null;
+        this.pointerDownFlag = false;
 
-        this.on('pointerdown', e => {
-            this.pointerDownFlag = true;
-        })
+        this.on('pointerdown', this.onPointerDown)
 
-        this.on('pointerup', e => {
-            if(SIGNALS.waveInProcess.value) return;
-            if(!this.pointerDownFlag) return;
-            this.pointerDownFlag = false;
-            if(this.savedArea) {
-                this.savedArea.unfixed();
-                this.circle = this.savedArea;
-                this.savedArea = null;
-                const pos = this.toLocal(e.data.global);
-                this.circle.position.set(pos.x, pos.y);
-                return;
-            }
-            if(this.circle) {
-                this.savedArea = this.circle;
-                this.circle = null;
-                this.savedArea.fixed()
+        this.on('pointerup', this.onPointerUp)
+        // this.on('pointerupoutside', this.onPointerUp)
+        this.on('globalpointermove', this.onPointerMove)
 
-            } else {
-                const pos = this.toLocal(e.data.global);
-                this.circle = this.createProtectCircle();
-                this.circle.position.set(pos.x, pos.y);
-            }
+    }
 
-        })
-        this.on('globalpointermove', e => {
-            if(!this.circle) return;
+    onPointerDown = (e) => {
+        this.pointerDownFlag = true;
+    }
+    onPointerMove = (e)=> {
+        if(!this.circle) return;
+        const pos = this.toLocal(e.data.global);
+        this.circle.position.set(pos.x, pos.y);
+        this.pointerDownFlag = false;
+    }
+    onPointerUp = (e) => {
+        if(SIGNALS.waveInProcess.value) return;
+        if(!this.pointerDownFlag) return;
+        this.pointerDownFlag = false;
+        if(this.savedArea) {
+            this.savedArea.unfixed();
+            this.circle = this.savedArea;
+            this.savedArea = null;
             const pos = this.toLocal(e.data.global);
             this.circle.position.set(pos.x, pos.y);
-            this.pointerDownFlag = false;
-        })
+            return;
+        }
+        if(this.circle) {
+            this.savedArea = this.circle;
+            this.circle = null;
+            this.savedArea.fixed()
+        } else {
 
+            const pos = this.toLocal(e.data.global);
+            this.circle = this.createProtectCircle();
+            this.circle.position.set(pos.x, pos.y);
+        }
     }
     attack(enemyPos) {
         if(!this.savedArea) return null;

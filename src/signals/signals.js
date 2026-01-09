@@ -2,7 +2,7 @@ import {computed, signal} from "@preact/signals-core";
 
 export const SIGNALS = {
     hp: signal(100),
-    money: signal(40055550), // 4000
+    money: signal(4000), // 4000
     enemiesOnBase: signal(0),
     miniBlockVisible: signal(false),
     towersAmount: signal(0),

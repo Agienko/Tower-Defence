@@ -22,6 +22,7 @@ export class ScaleSystem extends Container{
         window.addEventListener('pointermove', this.onPointerMove);
         window.addEventListener('wheel', this.onWheel);
         window.addEventListener('pointerup', this.onPointerUp);
+        window.addEventListener('contextmenu', this.onPointerUp);
         window.addEventListener('pointercancel', this.onPointerUp);
 
         this.viewPort = window.visualViewport ?? window;

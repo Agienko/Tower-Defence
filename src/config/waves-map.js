@@ -11,11 +11,12 @@ export const wavesMap = [
         {type: 'solder', count: 25, duration: 15},
         {type: 'solder', count: 25, duration: 15},
         {type: 'tank', count: 1, duration: 15},
+        {type: 'tank', count: 4, duration: 22},
     ],
     [
         {type: 'solder', count: 25, duration: 15},
         {type: 'tank', count: 4, duration: 15},
-        {type: 'solder', count: 25, duration: 15},
+        {type: 'solder', count: 25, duration: 20},
         {type: 'tank', count: 4, duration: 15},
     ],
     [

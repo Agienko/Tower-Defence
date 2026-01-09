@@ -1,4 +1,4 @@
-import {Container, Graphics, Sprite, Text, Texture} from "pixi.js";
+import {Container, Graphics, Rectangle, Sprite, Text, Texture} from "pixi.js";
 import {createTexture} from "../../../helpers/helper.js";
 import {SIGNALS} from "../../../signals/signals.js";
 import {sender} from "../../../sender/event-sender.js";
@@ -44,6 +44,8 @@ export class Base extends Container{
         this.eventMode = 'static';
         this.cursor = 'pointer';
         this.on('pointerdown', e => e.stopPropagation());
+
+        this.hitArea = new Rectangle(32, 64, 128 + 64, 128);
 
         this.on('pointerup', e => {
             e.stopPropagation();

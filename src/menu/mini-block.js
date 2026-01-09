@@ -2,7 +2,6 @@ import {Container, Sprite, Texture} from "pixi.js";
 import {SIGNALS} from "../signals/signals.js";
 import {effect} from "@preact/signals-core";
 import {gsap} from "gsap";
-import {Health} from "../game/components/health/health.js";
 import {MiniContent} from "./mini-content.js";
 import {createTexture} from "../helpers/helper.js";
 
@@ -19,16 +18,6 @@ export class MiniBlock extends Container{
             alpha: 0.5
         })
         this.addChild(this.bg);
-
-        this.hp = new Health(this, {
-            width: 220,
-            height: 4,
-            alpha: 0.9,
-            x: 25,
-            y: 4,
-        });
-        effect(() => this.hp.set(SIGNALS.hp.value))
-        this.addChild(this.hp);
 
         this.switcher = new Sprite({
             texture: createTexture('275'),
