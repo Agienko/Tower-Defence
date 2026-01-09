@@ -1,4 +1,4 @@
-import {Container, Graphics, Sprite, Text} from "pixi.js";
+import {Container, Graphics, Sprite, Text, Texture} from "pixi.js";
 import {createTexture} from "../../../helpers/helper.js";
 import {SIGNALS} from "../../../signals/signals.js";
 import {sender} from "../../../sender/event-sender.js";

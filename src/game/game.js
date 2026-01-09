@@ -14,8 +14,8 @@ export class Game extends ScaleSystem{
         super(stage);
 
         this.bgBuilder = new BgBuilder(this);
-        this.remainsContainer = new RemainsBuilder(this);
         this.ui = new Ui(this);
+        this.remainsContainer = new RemainsBuilder(this);
         this.world = new World(this);
         this.diedEnemies = SIGNALS.diedEnemies.value
 

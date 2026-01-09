@@ -79,8 +79,6 @@ export class ScaleSystem extends Container{
     }
     onPointerMove = (e) => {
         if (!this.pointers.has(e.pointerId)) return;
-
-        app.stage.eventMode = 'none';
         this.pointers.set(e.pointerId, {x: e.x, y: e.y});
 
         if(this.pointers.size === 1){

@@ -1,4 +1,4 @@
-import {Container, Graphics, Sprite, Text} from "pixi.js";
+import {Container, Graphics, Sprite, Text, Texture} from "pixi.js";
 import {createTexture} from "../../../helpers/helper.js";
 
 import {sender} from "../../../sender/event-sender.js";
@@ -24,10 +24,11 @@ export class WorldIcon extends Container{
         this.addChild(this.body);
 
         this.bg = new Sprite({
-            texture: createTexture('183'),
+            texture:Texture.WHITE,
             width: 128,
             height: 128,
-            alpha: 0.5
+            alpha: 0.3,
+            // blendMode: 'screen'
         })
         this.addChild(this.bg);
 
@@ -65,57 +66,21 @@ export class WorldIcon extends Container{
                 fontSize: 18,
                 fill: 0xffffff
             },
-            x: 104 - 20,
+            x: 84,
             y: 0,
         })
-
-        // const rocketFrame = new Graphics();
-        // rocketFrame.rect(0, 0, 64, 64);
-        // rocketFrame.stroke({color: "#8f8f8f", width: 4});
-        // rocketFrame.fill({color: "#dddddd", alpha: 1});
-        // rocketFrame.y = 20
-        //
-        //
-        // const bulletFrame = new Graphics();
-        // bulletFrame.rect(0, 0, 64, 64);
-        // bulletFrame.stroke({color: "#8f8f8f", width: 4});
-        // bulletFrame.fill({color: "#dddddd", alpha: 1});
-        // bulletFrame.x = 104;
-        // bulletFrame.y = 20
-        // content.addChild(rocketFrame, bulletFrame);
-        // const rocketIcon = new Sprite({
-        //     texture: createTexture(this.descriptor.icons[0].icon),
-        //     width: 64,
-        //     height: 64,
-        //     y: 20
-        // })
-        // const bulletIcon = new Sprite({
-        //     texture: createTexture(this.descriptor.icons[1].icon),
-        //     width: 64,
-        //     height: 64,
-        //     x: 104,
-        //     y: 20
-        // })
 
         this.descriptor.icons.forEach((icon, i) => {
             const miniBlockIcon = new MiniBlockIcon(content, {
                 ...icon, pos: this.pos, costType: this.descriptor.costType,
             })
-
             const colAmount = 2;
             const row = Math.floor(i / colAmount);
             const col = i % colAmount;
 
-            const step = 64;
             miniBlockIcon.x = 10 + col*84
             miniBlockIcon.y = 24 + row*84
-
         })
-
-
-
-
-
 
         const cost = SIGNALS[this.descriptor.costType].value;
         const isEnoughMoney = SIGNALS.money.value >= cost;
@@ -129,38 +94,11 @@ export class WorldIcon extends Container{
                 wordWrap: true,
                 wordWrapWidth: 200
             },
-            x: 104 - 20,
-            y: 96 + 100,
+            x: 84,
+            y: 196,
         })
 
-        // rocketIcon.eventMode = 'static';
-        // bulletIcon.eventMode = 'static';
-        // rocketIcon.cursor = 'pointer';
-        // bulletIcon.cursor = 'pointer';
-        //
-        // rocketIcon.on('pointerup', () => {
-        //     if(!isEnoughMoney) return;
-        //     content.destroy({children: true});
-        //     SIGNALS.miniBlockVisible.value = false;
-        //     sender.send('createBuilding', {type: this.descriptor.icons[0].type, position: this.pos, costType: this.descriptor.costType})
-        // });
-        // bulletIcon.on('pointerup', () => {
-        //     if(!isEnoughMoney) return;
-        //     content.destroy({children: true});
-        //     SIGNALS.miniBlockVisible.value = false;
-        //     sender.send('createBuilding', {type: this.descriptor.icons[1].type, position: this.pos, costType: this.descriptor.costType})
-        // });
         content.addChild(text, costText);
-
-
-        if(this.descriptor.icons.length === 3){
-
-        }
-
-
-
-
-
 
         return content;
     }

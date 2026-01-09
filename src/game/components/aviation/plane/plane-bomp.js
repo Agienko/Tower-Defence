@@ -13,28 +13,28 @@ export class PlaneBomb extends Container{
         this.stage = stage;
         this.stage.addChild(this);
 
-        this.tween = null;
-
         this.body = new Sprite({
-            texture: createTexture('272'),
-            width: 72,
-            height: 72,
+            texture: createTexture('251'),
+            width: 64,
+            height: 64,
+            angle: 90
         })
         this.body.anchor.set(0.5);
 
 
         this.shadow = new Sprite({
-            texture: createTexture('272'),
-            width: 72,
-            height: 72,
+            texture: createTexture('251'),
+            width: 64,
+            height: 64,
             tint: 0x000000,
             x: -32,
             y: 32,
             alpha: 0.15,
             blendMode: 'multiply',
+            angle: 90
         })
         this.shadow.anchor.set(0.5);
-        this.shadow.scale.set(1.1);
+        this.shadow.scale.set(0.8);
         this.shadowBlur = new BlurFilter({strength: 3});
         this.shadow.filters = [this.shadowBlur];
 
@@ -57,8 +57,6 @@ export class PlaneBomb extends Container{
     }
 
     start(){
-
-        console.log('start', this.stage)
         const {from, to, delay = 0, attackTime} = this.params;
         this.position.set(from.x, from.y);
         this.tween = gsap.delayedCall(delay, () => {

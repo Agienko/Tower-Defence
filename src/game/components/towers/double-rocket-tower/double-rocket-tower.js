@@ -13,11 +13,11 @@ const params = {
     detectionRadius: 300,
     detectionInterval: 3,
     accuracyRadius: 32,
-    aimingTime: 0.5,
+    aimingTime: 1,
     bullet: {
-        attackTime: 1,
+        attackTime: 1.3,
         damageRadius: 64,
-        damage: 50,
+        damage: 25,
     }
 }
 
@@ -44,18 +44,16 @@ export class DoubleRocketTower extends AbstractTower{
         this.attackTween = gsap.to(this.turret, {rotation, duration: params.aimingTime/2, onComplete: () => {
 
                 const from = this.stage.toLocal(this.bullet.getGlobalPosition());
-                this.bulletKillObj = this.bullet.start({from, to, rotation, stage: this.stage}, () => {
+                this.bulletKillObj = this.bullet.start({from, to: {x: to.x + randomMinMax(-10, 10), y: to.y + randomMinMax(-10, 10)}, rotation, stage: this.stage}, () => {
                     if(this.destroyed) return;
                     this.bullet = new this.BulletClass(this.turret, params.bullet);
                     this.bullet.x = -12;
-                    // this.startIdle();
-                    // this.detectEnemyCycle()
                 });
                 this.bullet = null
 
-                this.attackTween =gsap.delayedCall(params.aimingTime/2, () => {
+                this.attackTween = gsap.delayedCall(params.aimingTime/2, () => {
                     const from2 = this.stage.toLocal(this.bullet2.getGlobalPosition());
-                    this.bulletKillObj2 = this.bullet2.start({from: from2, to, rotation, stage: this.stage}, () => {
+                    this.bulletKillObj2 = this.bullet2.start({from: from2, to: {x: to.x + randomMinMax(-10, 10), y: to.y + randomMinMax(-10, 10)}, rotation, stage: this.stage}, () => {
                         if(this.destroyed) return;
                         this.bullet2 = new this.BulletClass(this.turret, params.bullet);
                         this.bullet2.x = 12;

@@ -37,6 +37,7 @@ export class Explosion extends AnimatedSprite{
 
     }
     explode(){
+        if(this.visible) return;
         this.visible = true;
         this.gotoAndPlay(0);
     }
