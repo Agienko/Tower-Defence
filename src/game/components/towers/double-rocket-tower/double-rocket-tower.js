@@ -12,12 +12,12 @@ const params = {
     armor: 1,
     detectionRadius: 300,
     detectionInterval: 3,
-    accuracyRadius: 32,
-    aimingTime: 1,
+    accuracyRadius: 12,
+    aimingTime: 0.8,
     bullet: {
-        attackTime: 1.3,
+        attackTime: 0.8,
         damageRadius: 64,
-        damage: 25,
+        damage: 35,
     }
 }
 

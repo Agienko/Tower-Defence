@@ -43,9 +43,10 @@ export class AbstractTower extends Container{
 
         this.health = new Health(this, {
             protection: params.armor,
-            width: 128,
+            width: 120,
             height: 2,
             alpha: 0.9,
+            x: 4
         }, () => this.destroy({children: true}));
 
         this.bullet = this.createBullet();
@@ -57,7 +58,24 @@ export class AbstractTower extends Container{
 
         this.startIdle(0);
         this.detectEnemyCycle()
+
+        //
+        // this._onPointerDown = this.onPointerDown.bind(this);
+        // this._onPointerMove = this.onPointerMove.bind(this);
+        // this._onPointerUp = this.onPointerUp.bind(this);
+
+
+
     }
+    // onPointerDown(e){
+    //
+    // }
+    // onPointerMove(e){
+    // }
+    // onPointerUp(e){
+    //
+    // }
+
 
     shiftShot(from, to, sideDelta, forwardDelta) {
         const dx = to.x - from.x;

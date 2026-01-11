@@ -10,7 +10,7 @@ import {Health} from "../../health/health.js";
 import {gsap, Power0, Power1, Power2} from "gsap";
 import {TankRocket} from "./tank-rocket.js";
 import {SIGNALS} from "../../../../signals/signals.js";
-import {directionPoints} from "../../../../config/direction-points.js";
+import {directions} from "../../../../config/direction-points.js";
 
 
 const debug = (stage, points) => {
@@ -28,7 +28,7 @@ const debug = (stage, points) => {
 }
 
 export class Tank extends Container{
-    constructor(stage, index) {
+    constructor(stage, index, wayIndex) {
         super();
         this.zIndex = 1;
         this.type = 'enemy';
@@ -81,7 +81,7 @@ export class Tank extends Container{
         this.bullet.angle = 90;
         // this.bullet.position.set(0, 12);
 
-        this.points = directionPoints
+        this.points = directions[wayIndex]
         this.health = new Health(this,{
             width: 32,
             height: 2,

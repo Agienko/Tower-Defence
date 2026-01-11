@@ -4,8 +4,8 @@ import {Tank} from "../tank/tank.js";
 import {circlesCollide, drawCircle, randomMinMax} from "../../../../helpers/helper.js";
 
 export class LaserTank extends Tank{
-    constructor(stage, index) {
-        super(stage, index);
+    constructor(stage, index, wayIndex) {
+        super(stage, index, wayIndex);
         this.bodySprite.tint = 0xdfdfdf;
 
         this.laserBall = new Graphics()

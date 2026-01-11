@@ -47,8 +47,8 @@ export class World extends Container{
 
             const map = wavesMap[SIGNALS.wave.value++] ?? wavesMap.at(-1);
 
-            map.forEach(({type, count, duration}) => {
-                timeLine.call(() => createEnemy(this, type, count))
+            map.forEach(({type, count, duration, way}) => {
+                timeLine.call(() => createEnemy(this, type, count, way))
                 timeLine.to({}, {duration})
             })
 

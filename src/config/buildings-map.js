@@ -115,14 +115,84 @@ export const buildingsMap = [
         costType: 'towerCost',
         icons: towerIcons
     },
+
+
+
     {
-        position: {i: 14, j: 9},
+        position: {i: 6, j: 12},
         name: '041',
         type: 'tower',
         text: 'Create Tower',
         costText: 'Tower cost +',
         costType: 'towerCost',
         icons: towerIcons
+    },
+
+    {
+        position: {i: 6, j: 15},
+        name: '041',
+        type: 'tower',
+        text: 'Create Tower',
+        costText: 'Tower cost +',
+        costType: 'towerCost',
+        icons: towerIcons
+    },
+    {
+        position: {i: 9, j: 9},
+        name: '041',
+        type: 'tower',
+        text: 'Create Tower',
+        costText: 'Tower cost +',
+        costType: 'towerCost',
+        icons: towerIcons
+    },
+    {
+        position: {i: 11, j: 12},
+        name: '041',
+        type: 'tower',
+        text: 'Create Tower',
+        costText: 'Tower cost +',
+        costType: 'towerCost',
+        icons: towerIcons
+    },
+    {
+        position: {i: 14, j: 12},
+        name: '041',
+        type: 'tower',
+        text: 'Create Tower',
+        costText: 'Tower cost +',
+        costType: 'towerCost',
+        icons: towerIcons
+    },
+
+    {
+        position: {i: 15, j: 9},
+        name: '064',
+        type: 'tower',
+        text: 'Create Tower',
+        costText: 'Tower cost +',
+        costType: 'towerCost',
+        icons: towerIcons
+    },
+
+    {
+        position: {i: 7, j: 15},
+        name: '044',
+        type: 'building',
+        text: 'Create Building',
+        costText: 'Cost +',
+        costType: 'buildingCost',
+        icons: buildingIcons
+    },
+
+    {
+        position: {i: 10, j: 12},
+        name: '044',
+        type: 'building',
+        text: 'Create Building',
+        costText: 'Cost +',
+        costType: 'buildingCost',
+        icons: buildingIcons
     },
 
 ]

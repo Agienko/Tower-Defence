@@ -15,9 +15,9 @@ const params = {
     accuracyRadius: 32,
     aimingTime: 0.5,
     bullet: {
-        attackTime: 1,
+        attackTime: 0.8,
         damageRadius: 64,
-        damage: 50,
+        damage: 60,
     }
 }
 

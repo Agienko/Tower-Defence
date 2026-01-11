@@ -3,6 +3,7 @@ import {AbstractTower} from "../towers/abstract-tower.js";
 import {SIGNALS} from "../../../signals/signals.js";
 import {gsap} from "gsap";
 import {Plane} from "./plane/plane.js";
+import {app} from "../../../main.js";
 
 const params = {
     skin: {
@@ -37,11 +38,11 @@ export class Airport extends AbstractTower{
         this.aimingTimeTimeLine = null;
         this.pointerDownFlag = false;
 
-        this.on('pointerdown', this.onPointerDown)
+        this.on('pointerdown',  this.onPointerDown)
 
-        this.on('pointerup', this.onPointerUp)
-        // this.on('pointerupoutside', this.onPointerUp)
-        this.on('globalpointermove', this.onPointerMove)
+        app.stage.on('pointerup', this.onPointerUp)
+
+        app.stage.on('globalpointermove', this.onPointerMove)
 
     }
 
@@ -56,7 +57,7 @@ export class Airport extends AbstractTower{
     }
     onPointerUp = (e) => {
         if(SIGNALS.waveInProcess.value) return;
-        if(!this.pointerDownFlag) return;
+        if(!this.pointerDownFlag && !this.circle) return;
         this.pointerDownFlag = false;
         if(this.savedArea) {
             this.savedArea.unfixed();
@@ -68,10 +69,11 @@ export class Airport extends AbstractTower{
         }
         if(this.circle) {
             this.savedArea = this.circle;
+            const pos = this.toLocal(e.data.global);
+            this.circle.position.set(pos.x, pos.y);
             this.circle = null;
             this.savedArea.fixed()
         } else {
-
             const pos = this.toLocal(e.data.global);
             this.circle = this.createProtectCircle();
             this.circle.position.set(pos.x, pos.y);

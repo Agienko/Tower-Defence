@@ -12,12 +12,12 @@ const params = {
     armor: 1,
     detectionRadius: 350,
     detectionInterval: 1.5,
-    accuracyRadius: 32,
+    accuracyRadius: 16,
     aimingTime: 0.3,
     bullet: {
-        attackTime: 0.2,
+        attackTime: 0.1,
         damageRadius: 32,
-        damage: 18,
+        damage: 22,
     }
 }
 
@@ -60,8 +60,6 @@ export class MiniGunTower extends AbstractTower{
 
             }});
     }
-
-
 
     destroy(options) {
         this.bulletKillObj.forEach(obj => obj.kill());

@@ -10,7 +10,7 @@ import {Health} from "../../health/health.js";
 import {gsap, Power0, Power1, Power2} from "gsap";
 import {GunBullet} from "./gun-bullet.js";
 import {SIGNALS} from "../../../../signals/signals.js";
-import {directionPoints} from "../../../../config/direction-points.js";
+import {directions} from "../../../../config/direction-points.js";
 
 
 const debug = (stage, points) => {
@@ -28,7 +28,7 @@ const debug = (stage, points) => {
 }
 
 export class Solder extends Container{
-    constructor(stage, index) {
+    constructor(stage, index, wayIndex) {
         super();
         this.zIndex = 1;
         this.type = 'enemy';
@@ -64,8 +64,6 @@ export class Solder extends Container{
         })
         this.bodySprite.anchor.set(0.5);
 
-
-
         this.gun = new Sprite({
             texture: createTexture('291'),
             width: 16,
@@ -93,7 +91,7 @@ export class Solder extends Container{
 
         this.body.addChild(this.bodySprite);
 
-        this.points = directionPoints
+        this.points = directions[wayIndex]
         this.health = new Health(this,{
             width: 16,
             height: 2,
@@ -113,7 +111,7 @@ export class Solder extends Container{
             this.moveTween = gsap.to(this.body, {alpha: 0, duration: 1, onComplete: () => this.destroy({children: true})});
         });
 
-        // debug(stage, points)
+        // debug(stage, this.points)
 
         this.position.set(this.points[0].x + this.corrX, this.points[0].y + this.corrY);
         this.setAngle(this.points[0].angle);
@@ -148,12 +146,6 @@ export class Solder extends Container{
 
             const myPoint = this.stage.toLocal(this.gun.position, this.body);
             const detectionRadius = randomMinMax(180, 210);
-            // const circle = new Graphics();
-            // circle.circle(myPoint.x, myPoint.y, detectionRadius);
-            // circle.fill({ color: 0xff0000, alpha: 0.5 });
-            // this.stage.addChild(circle);
-            // setTimeout(() => circle.destroy(), 1000);
-
 
             const hasEnemy = this.stage.children.some(child => {
                 if(child.type === 'tower'){
@@ -161,12 +153,6 @@ export class Solder extends Container{
 
                     if (circlesCollide(myPoint.x, myPoint.y, detectionRadius, enemy.x, enemy.y, 64)){
 
-                        // const circle = new Graphics();
-                        // circle.circle(enemy.x, enemy.y, 64);
-                        // circle.fill({ color: 0x00ff00, alpha: 0.5 });
-                        // this.stage.addChild(circle);
-
-                        // this.timeLine.pause();
                         this.moveTween?.kill();
 
 
@@ -183,15 +169,12 @@ export class Solder extends Container{
                                     this.detectCycle();
                                     this.moveTween = gsap.to(this.body, {angle: this.savedAngle - 5, duration: 0.2, onComplete: () => {
                                             this.setAngle(this.savedAngle);
-                                            // this.timeLine.play()
                                         }});
 
                                     if(child.destroyed) return;
                                     child.health.updateHealth(-0.3)
                                 });
                             }})
-
-
                         return true;
                     }
                 }
@@ -201,13 +184,6 @@ export class Solder extends Container{
 
             this.detectCycle();
 
-
-            // if(this.timeLine.paused()){
-            //     this.moveTween?.kill();
-            //     // this.setAngle(this.savedAngle);
-            //     // this.timeLine.play();
-            //
-            // }
         })
     }
 

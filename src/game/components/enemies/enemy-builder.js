@@ -12,10 +12,10 @@ const towerMap = {
     'laser-tank': LaserTank
 }
 
-export const createEnemy = (stage, type, amount) => {
+export const createEnemy = (stage, type, amount, way) => {
     const Enemy = towerMap[type];
     if(!Enemy) return console.error('enemy not found');
     SIGNALS.enemiesAmount.value += amount;
-    for(let i = 0; i < amount; i++)new Enemy(stage, i);
+    for(let i = 0; i < amount; i++)new Enemy(stage, i, way);
 
 }

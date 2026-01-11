@@ -15,7 +15,7 @@ export const app = new Application();
 
 (async () => {
     await app.init({
-        resolution: devicePixelRatio*2,
+        resolution: devicePixelRatio,
         autoDensity: true,
         antialias: false,
         preference: 'webgpu',
